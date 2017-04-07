@@ -68,6 +68,62 @@
     
     </summary>
     
+    
+  </entry>
+  
+  <entry>
+    <title>细谈OC中的深浅拷贝</title>
+    <link href="http://www.shiwenwen.top/2017/04/07/talking-about-oc-copy/"/>
+    <id>http://www.shiwenwen.top/2017/04/07/talking-about-oc-copy/</id>
+    <published>2017-04-07T06:31:14.000Z</published>
+    <updated>2017-04-07T09:49:04.000Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote>
+<p>关于深浅拷贝，已经是个老生常谈的问题了，自己曾经也有在面试中被问过，最近有个朋友问到过这个问题，借此机会，我们来细谈一下深浅拷贝的问题。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="深浅拷贝的概念"><a href="#深浅拷贝的概念" class="headerlink" title="深浅拷贝的概念"></a>深浅拷贝的概念</h2><p>什么是深拷贝什么是浅拷贝呢，简单来说就是：</p>
+<ul>
+<li>深拷贝是对一个对象的内容的拷贝，分配新的内存去存储。拷贝后的对象和原来的对象并不是同一个对象，只是内容一样而已。</li>
+<li>浅拷贝则是对对象地址的拷贝，和原来的对象的内容是同一份，并没有分配新的内存。</li>
+</ul>
+<h2 id="深浅拷贝演示"><a href="#深浅拷贝演示" class="headerlink" title="深浅拷贝演示"></a>深浅拷贝演示</h2><ul>
+<li>我们定义一个Person类如下:<br><img src="/2017/04/07/talking-about-oc-copy/PersonInterface.png" alt="PersonClass"></li>
+<li>然后我们生成一个Person对象p1,再定义一个p2，将p1赋值给p2:<br><img src="/2017/04/07/talking-about-oc-copy/p1p2.png" alt="PersonClass"><br>这里实际上就是进行了一次浅拷贝，把p1的地址赋给了p2。p1和p2都是指向同一个对象,但是对象的引用计数增加了1。<br><img src="/2017/04/07/talking-about-oc-copy/p1p2_address.png" alt="PersonClass"><br>如果我们对p2的属性进行修改,则p1也会改变，因为操作的就是同一个对象。</li>
+<li>如何进行深拷贝呢,我们可以遵守NSCopying,NSMutableCopying协议,实现:</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">id</span>)copyWithZone:(<span class="keyword">nullable</span> <span class="built_in">NSZone</span> *)zone;</div><div class="line">- (<span class="keyword">id</span>)mutableCopyWithZone:(<span class="keyword">nullable</span> <span class="built_in">NSZone</span> *)zone;</div></pre></td></tr></table></figure>
+<p>我们来准守NSCopying,</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Person</span> : <span class="title">NSObject</span> &lt;<span class="title">NSCopying</span>,<span class="title">NSMutableCopying</span>&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Person</span></span></div><div class="line">-(<span class="keyword">id</span>)copyWithZone:(<span class="built_in">NSZone</span> *)zone&#123;</div><div class="line">    Person *p = [Person allocWithZone:zone];</div><div class="line">    p.name = _name; <span class="comment">//因为属性name是在前面是通过copy声明，在赋值的时候会自动调用到copy,所以这里不需要 [_name copy]</span></div><div class="line">    p.age = _age;</div><div class="line">    p.height = _height;</div><div class="line">    <span class="keyword">return</span> p;</div><div class="line">&#125;</div><div class="line"></div><div class="line">```	</div><div class="line">声明对象p3为p1的拷贝:</div><div class="line"></div><div class="line">```objc</div><div class="line">Person *p3 = [p1 <span class="keyword">copy</span>];</div></pre></td></tr></table></figure>
+<p>运行，查看:<br><img src="/2017/04/07/talking-about-oc-copy/p3.png" alt="p3"></p>
+<h2 id="Foundation中的深浅拷贝"><a href="#Foundation中的深浅拷贝" class="headerlink" title="Foundation中的深浅拷贝"></a>Foundation中的深浅拷贝</h2><h3 id="NSString"><a href="#NSString" class="headerlink" title="NSString"></a>NSString</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span> *s1 = <span class="string">@"hello word"</span>;</div><div class="line"><span class="built_in">NSString</span> *s2 = s1;</div><div class="line"><span class="built_in">NSString</span> *s3 = [s1 <span class="keyword">copy</span>];</div><div class="line"><span class="built_in">NSMutableString</span> *s4 = [s1 mutableCopy];</div></pre></td></tr></table></figure>
+<p>这里我们用字面量直接创建了一个不可变字符串s1,然后通过直接赋值和copy方式分别赋值给了s2,s3。实际上对于不可变字符串，这两个赋值方式效果是等价的，都是浅拷贝,都造成了引用计数增加1。<br>为什么s4我用可变字符串来声明呢，因为对于不可变字符串进行mutableCopy，就会在内存中生成一个可变字符串对象，并把原来字符串的内容拿过来。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//我们来对s4进行一些操作来确定s4确实是可变字符串</span></div><div class="line"></div><div class="line">[s4 appendString:<span class="string">@"!!!!"</span>];</div></pre></td></tr></table></figure>
+<p>结果:<img src="/2017/04/07/talking-about-oc-copy/s4.png" alt="s4"><br>如果我们用可变字符串来声明s3,并调用可变字符串的方法，则会报错。</p>
+<p><strong>结论：对于NSString,直接赋值和copy都是浅拷贝, mutableCopy为深拷贝</strong></p>
+<h3 id="NSMutableString"><a href="#NSMutableString" class="headerlink" title="NSMutableString"></a>NSMutableString</h3><p>我们直接用上面生成的可变字符串s4:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSMutableString</span> *s5 = s4;</div><div class="line">[s5 appendString:<span class="string">@"##^_^"</span>];</div></pre></td></tr></table></figure>
+<p>查看运行后结果:<br><img src="/2017/04/07/talking-about-oc-copy/s5.png" alt="s5"></p>
+<p>和我们预期的一样，s4的值随s5一起改变了，因为是浅拷贝，所指向的字符串对象是同一个。</p>
+<p>我们接着操作:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSMutableString</span> *s6 = [s4 <span class="keyword">copy</span>];</div><div class="line">[s5 appendString:<span class="string">@"##~_~"</span>];</div></pre></td></tr></table></figure>
+<p>运行后，程序在<strong>appendString</strong>处崩溃，因为可变字符串执行copy实际上会在内存中生成一个内容相同的不可变字符串，是深拷贝。(ps：所以我们给一个类声明字符串类型的property时，通常使用copy,防止外部对字符串进行了改变影响到对象)。<br>我们改为这样写:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span> *s6 = [s4 <span class="keyword">copy</span>];</div></pre></td></tr></table></figure>
+<p>接着我们来测试mutableCopy:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSMutableString</span> *s7 = [s4 mutableCopy];</div><div class="line">[s7 appendString:<span class="string">@"##~_~"</span>];</div></pre></td></tr></table></figure>
+<p>运行没有任何问题，结果如下:<br><img src="/2017/04/07/talking-about-oc-copy/s7.png" alt="s7"><br>可以看出,s7是一个可变对象，但是对s7的操作并没有影响到s4,s5。所以可变字符串执行mutableCopy，也是深拷贝，会在内存中生成一个新的内容一样的可变字符串。</p>
+<p><strong>结论：对于NSMutableString,直接赋值是浅拷贝, copy和mutableCopy都为深拷贝,copy会产生一个不可变字符串对象，而mutableCopy会产生一个可变字符串对象</strong></p>
+<h2 id="未完待续……"><a href="#未完待续……" class="headerlink" title="未完待续……"></a>未完待续……</h2>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;关于深浅拷贝，已经是个老生常谈的问题了，自己曾经也有在面试中被问过，最近有个朋友问到过这个问题，借此机会，我们来细谈一下深浅拷贝的问题。&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
       <category term="OC" scheme="http://www.shiwenwen.top/categories/OC/"/>
     
     

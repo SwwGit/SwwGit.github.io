@@ -1,370 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   
-  
     
     <entry>
       <title><![CDATA[细谈OC中的深浅拷贝]]></title>
-      <url>http://www.shiwenwen.top/2017/04/07/talking-aboult-oc-copy/</url>
-      <content type="html"><![CDATA[<blockquote>
-<p>关于深浅拷贝，已经是个老生常谈的问题了，自己曾经也有在面试中被问过，最近有个朋友问到过这个问题，借此机会，我们来细谈一下深浅拷贝的问题。</p>
-</blockquote>
-<a id="more"></a>
-<h2 id="深浅拷贝的概念"><a href="#深浅拷贝的概念" class="headerlink" title="深浅拷贝的概念"></a>深浅拷贝的概念</h2><p>什么是深拷贝什么是浅拷贝呢，简单来说就是：</p>
-<ul>
-<li>深拷贝是对一个对象的内容的拷贝，分配新的内存去存储。拷贝后的对象和原来的对象并不是同一个对象，只是内容一样而已。</li>
-<li>浅拷贝则是对对象地址的拷贝，和原来的对象的内容是同一份，并没有分配新的内存。</li>
-</ul>
-<h2 id="深浅拷贝演示"><a href="#深浅拷贝演示" class="headerlink" title="深浅拷贝演示"></a>深浅拷贝演示</h2><ul>
-<li>我们定义一个Person类如下:<br><img src="/2017/04/07/talking-aboult-oc-copy/PersonInterface.png" alt="PersonClass"></li>
-<li>然后我们生成一个Person对象p1,再定义一个p2，将p1赋值给p2:<br><img src="/2017/04/07/talking-aboult-oc-copy/p1p2.png" alt="PersonClass"><br>这里实际上就是进行了一次浅拷贝，把p1的地址赋给了p2。p1和p2都是指向同一个对象,但是对象的引用计数增加了1。<br><img src="/2017/04/07/talking-aboult-oc-copy/p1p2_address.png" alt="PersonClass"><br>如果我们对p2的属性进行修改,则p1也会改变，因为操作的就是同一个对象。</li>
-<li>如何进行深拷贝呢,我们可以遵守NSCopying,NSMutableCopying协议,实现:</li>
-</ul>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">id</span>)copyWithZone:(<span class="keyword">nullable</span> <span class="built_in">NSZone</span> *)zone;</div><div class="line">- (<span class="keyword">id</span>)mutableCopyWithZone:(<span class="keyword">nullable</span> <span class="built_in">NSZone</span> *)zone;</div></pre></td></tr></table></figure>
-<p>我们来准守NSCopying,</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Person</span> : <span class="title">NSObject</span> &lt;<span class="title">NSCopying</span>,<span class="title">NSMutableCopying</span>&gt;</span></div></pre></td></tr></table></figure>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Person</span></span></div><div class="line">-(<span class="keyword">id</span>)copyWithZone:(<span class="built_in">NSZone</span> *)zone&#123;</div><div class="line">    Person *p = [Person allocWithZone:zone];</div><div class="line">    p.name = _name; <span class="comment">//因为属性name是在前面是通过copy声明，在赋值的时候会自动调用到copy,所以这里不需要 [_name copy]</span></div><div class="line">    p.age = _age;</div><div class="line">    p.height = _height;</div><div class="line">    <span class="keyword">return</span> p;</div><div class="line">&#125;</div><div class="line"></div><div class="line">```	</div><div class="line">声明对象p3为p1的拷贝:</div><div class="line"></div><div class="line">```objc</div><div class="line">Person *p3 = [p1 <span class="keyword">copy</span>];</div></pre></td></tr></table></figure>
-<p>运行，查看:<br><img src="/2017/04/07/talking-aboult-oc-copy/p3.png" alt="p3"></p>
-<h2 id="Foundation中的深浅拷贝"><a href="#Foundation中的深浅拷贝" class="headerlink" title="Foundation中的深浅拷贝"></a>Foundation中的深浅拷贝</h2><h3 id="NSString"><a href="#NSString" class="headerlink" title="NSString"></a>NSString</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span> *s1 = <span class="string">@"hello word"</span>;</div><div class="line"><span class="built_in">NSString</span> *s2 = s1;</div><div class="line"><span class="built_in">NSString</span> *s3 = [s1 <span class="keyword">copy</span>];</div><div class="line"><span class="built_in">NSMutableString</span> *s4 = [s1 mutableCopy];</div></pre></td></tr></table></figure>
-<p>这里我们用字面量直接创建了一个不可变字符串s1,然后通过直接赋值和copy方式分别赋值给了s2,s3。实际上对于不可变字符串，这两个赋值方式效果是等价的，都是浅拷贝,都造成了引用计数增加1。<br>为什么s4我用可变字符串来声明呢，因为对于不可变字符串进行mutableCopy，就会在内存中生成一个可变字符串对象，并把原来字符串的内容拿过来。</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//我们来对s4进行一些操作来确定s4确实是可变字符串</span></div><div class="line"></div><div class="line">[s4 appendString:<span class="string">@"!!!!"</span>];</div></pre></td></tr></table></figure>
-<p>结果:<img src="/2017/04/07/talking-aboult-oc-copy/s4.png" alt="s4"><br>如果我们用可变字符串来声明s3,并调用可变字符串的方法，则会报错。</p>
-<p><strong>结论：对于NSString,直接赋值和copy都是浅拷贝, mutableCopy为深拷贝</strong></p>
-<h3 id="NSMutableString"><a href="#NSMutableString" class="headerlink" title="NSMutableString"></a>NSMutableString</h3><p>我们直接用上面生成的可变字符串s4:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSMutableString</span> *s5 = s4;</div><div class="line">[s5 appendString:<span class="string">@"##^_^"</span>];</div></pre></td></tr></table></figure>
-<p>查看运行后结果:<br><img src="/2017/04/07/talking-aboult-oc-copy/s5.png" alt="s5"></p>
-<p>和我们预期的一样，s4的值随s5一起改变了，因为是浅拷贝，所指向的字符串对象是同一个。</p>
-<p>我们接着操作:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSMutableString</span> *s6 = [s4 <span class="keyword">copy</span>];</div><div class="line">[s5 appendString:<span class="string">@"##~_~"</span>];</div></pre></td></tr></table></figure>
-<p>运行后，程序在<strong>appendString</strong>处崩溃，因为可变字符串执行copy实际上会在内存中生成一个内容相同的不可变字符串，是深拷贝。(ps：所以我们给一个类声明字符串类型的property时，通常使用copy,防止外部对字符串进行了改变影响到对象)。<br>我们改为这样写:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span> *s6 = [s4 <span class="keyword">copy</span>];</div></pre></td></tr></table></figure>
-<p>接着我们来测试mutableCopy:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSMutableString</span> *s7 = [s4 mutableCopy];</div><div class="line">[s7 appendString:<span class="string">@"##~_~"</span>];</div></pre></td></tr></table></figure>
-<p>运行没有任何问题，结果如下:<br><img src="/2017/04/07/talking-aboult-oc-copy/s7.png" alt="s7"><br>可以看出,s7是一个可变对象，但是对s7的操作并没有影响到s4,s5。所以可变字符串执行mutableCopy，也是深拷贝，会在内存中生成一个新的内容一样的可变字符串。</p>
-<p><strong>结论：对于NSMutableString,直接赋值是浅拷贝, copy和mutableCopy都为深拷贝,copy会产生一个不可变字符串对象，而mutableCopy会产生一个可变字符串对象</strong></p>
-<h2 id="未完待续……"><a href="#未完待续……" class="headerlink" title="未完待续……"></a>未完待续……</h2>]]></content>
-      
-        <categories>
-            
-            <category> OC </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> iOS </tag>
-            
-            <tag> OC </tag>
-            
-        </tags>
-        
+      <url>%2F2017%2F04%2F07%2Ftalking-aboult-oc-copy%2F</url>
+      <content type="text"><![CDATA[关于深浅拷贝，已经是个老生常谈的问题了，自己曾经也有在面试中被问过，最近有个朋友问到过这个问题，借此机会，我们来细谈一下深浅拷贝的问题。 深浅拷贝的概念什么是深拷贝什么是浅拷贝呢，简单来说就是： 深拷贝是对一个对象的内容的拷贝，分配新的内存去存储。拷贝后的对象和原来的对象并不是同一个对象，只是内容一样而已。 浅拷贝则是对对象地址的拷贝，和原来的对象的内容是同一份，并没有分配新的内存。 深浅拷贝演示 我们定义一个Person类如下: 然后我们生成一个Person对象p1,再定义一个p2，将p1赋值给p2:这里实际上就是进行了一次浅拷贝，把p1的地址赋给了p2。p1和p2都是指向同一个对象,但是对象的引用计数增加了1。如果我们对p2的属性进行修改,则p1也会改变，因为操作的就是同一个对象。 如何进行深拷贝呢,我们可以遵守NSCopying,NSMutableCopying协议,实现: 12- (id)copyWithZone:(nullable NSZone *)zone;- (id)mutableCopyWithZone:(nullable NSZone *)zone; 我们来准守NSCopying, 1@interface Person : NSObject &lt;NSCopying,NSMutableCopying&gt; 1234567891011121314@implementation Person-(id)copyWithZone:(NSZone *)zone&#123; Person *p = [Person allocWithZone:zone]; p.name = _name; //因为属性name是在前面是通过copy声明，在赋值的时候会自动调用到copy,所以这里不需要 [_name copy] p.age = _age; p.height = _height; return p;&#125;``` 声明对象p3为p1的拷贝:```objcPerson *p3 = [p1 copy]; 运行，查看: Foundation中的深浅拷贝NSString1234NSString *s1 = @"hello word";NSString *s2 = s1;NSString *s3 = [s1 copy];NSMutableString *s4 = [s1 mutableCopy]; 这里我们用字面量直接创建了一个不可变字符串s1,然后通过直接赋值和copy方式分别赋值给了s2,s3。实际上对于不可变字符串，这两个赋值方式效果是等价的，都是浅拷贝,都造成了引用计数增加1。为什么s4我用可变字符串来声明呢，因为对于不可变字符串进行mutableCopy，就会在内存中生成一个可变字符串对象，并把原来字符串的内容拿过来。 123//我们来对s4进行一些操作来确定s4确实是可变字符串[s4 appendString:@"!!!!"]; 结果:如果我们用可变字符串来声明s3,并调用可变字符串的方法，则会报错。 结论：对于NSString,直接赋值和copy都是浅拷贝, mutableCopy为深拷贝 NSMutableString我们直接用上面生成的可变字符串s4: 12NSMutableString *s5 = s4;[s5 appendString:@"##^_^"]; 查看运行后结果: 和我们预期的一样，s4的值随s5一起改变了，因为是浅拷贝，所指向的字符串对象是同一个。 我们接着操作: 12NSMutableString *s6 = [s4 copy];[s5 appendString:@"##~_~"]; 运行后，程序在appendString处崩溃，因为可变字符串执行copy实际上会在内存中生成一个内容相同的不可变字符串，是深拷贝。(ps：所以我们给一个类声明字符串类型的property时，通常使用copy,防止外部对字符串进行了改变影响到对象)。我们改为这样写: 1NSString *s6 = [s4 copy]; 接着我们来测试mutableCopy: 12NSMutableString *s7 = [s4 mutableCopy];[s7 appendString:@"##~_~"]; 运行没有任何问题，结果如下:可以看出,s7是一个可变对象，但是对s7的操作并没有影响到s4,s5。所以可变字符串执行mutableCopy，也是深拷贝，会在内存中生成一个新的内容一样的可变字符串。 结论：对于NSMutableString,直接赋值是浅拷贝, copy和mutableCopy都为深拷贝,copy会产生一个不可变字符串对象，而mutableCopy会产生一个可变字符串对象 未完待续……]]></content>
     </entry>
+
+    
+    <entry>
+      <title><![CDATA[细谈OC中的深浅拷贝]]></title>
+      <url>%2F2017%2F04%2F07%2Ftalking-about-oc-copy%2F</url>
+      <content type="text"><![CDATA[关于深浅拷贝，已经是个老生常谈的问题了，自己曾经也有在面试中被问过，最近有个朋友问到过这个问题，借此机会，我们来细谈一下深浅拷贝的问题。 深浅拷贝的概念什么是深拷贝什么是浅拷贝呢，简单来说就是： 深拷贝是对一个对象的内容的拷贝，分配新的内存去存储。拷贝后的对象和原来的对象并不是同一个对象，只是内容一样而已。 浅拷贝则是对对象地址的拷贝，和原来的对象的内容是同一份，并没有分配新的内存。 深浅拷贝演示 我们定义一个Person类如下: 然后我们生成一个Person对象p1,再定义一个p2，将p1赋值给p2:这里实际上就是进行了一次浅拷贝，把p1的地址赋给了p2。p1和p2都是指向同一个对象,但是对象的引用计数增加了1。如果我们对p2的属性进行修改,则p1也会改变，因为操作的就是同一个对象。 如何进行深拷贝呢,我们可以遵守NSCopying,NSMutableCopying协议,实现: 12- (id)copyWithZone:(nullable NSZone *)zone;- (id)mutableCopyWithZone:(nullable NSZone *)zone; 我们来准守NSCopying, 1@interface Person : NSObject &lt;NSCopying,NSMutableCopying&gt; 1234567891011121314@implementation Person-(id)copyWithZone:(NSZone *)zone&#123; Person *p = [Person allocWithZone:zone]; p.name = _name; //因为属性name是在前面是通过copy声明，在赋值的时候会自动调用到copy,所以这里不需要 [_name copy] p.age = _age; p.height = _height; return p;&#125;``` 声明对象p3为p1的拷贝:```objcPerson *p3 = [p1 copy]; 运行，查看: Foundation中的深浅拷贝NSString1234NSString *s1 = @"hello word";NSString *s2 = s1;NSString *s3 = [s1 copy];NSMutableString *s4 = [s1 mutableCopy]; 这里我们用字面量直接创建了一个不可变字符串s1,然后通过直接赋值和copy方式分别赋值给了s2,s3。实际上对于不可变字符串，这两个赋值方式效果是等价的，都是浅拷贝,都造成了引用计数增加1。为什么s4我用可变字符串来声明呢，因为对于不可变字符串进行mutableCopy，就会在内存中生成一个可变字符串对象，并把原来字符串的内容拿过来。 123//我们来对s4进行一些操作来确定s4确实是可变字符串[s4 appendString:@"!!!!"]; 结果:如果我们用可变字符串来声明s3,并调用可变字符串的方法，则会报错。 结论：对于NSString,直接赋值和copy都是浅拷贝, mutableCopy为深拷贝 NSMutableString我们直接用上面生成的可变字符串s4: 12NSMutableString *s5 = s4;[s5 appendString:@"##^_^"]; 查看运行后结果: 和我们预期的一样，s4的值随s5一起改变了，因为是浅拷贝，所指向的字符串对象是同一个。 我们接着操作: 12NSMutableString *s6 = [s4 copy];[s5 appendString:@"##~_~"]; 运行后，程序在appendString处崩溃，因为可变字符串执行copy实际上会在内存中生成一个内容相同的不可变字符串，是深拷贝。(ps：所以我们给一个类声明字符串类型的property时，通常使用copy,防止外部对字符串进行了改变影响到对象)。我们改为这样写: 1NSString *s6 = [s4 copy]; 接着我们来测试mutableCopy: 12NSMutableString *s7 = [s4 mutableCopy];[s7 appendString:@"##~_~"]; 运行没有任何问题，结果如下:可以看出,s7是一个可变对象，但是对s7的操作并没有影响到s4,s5。所以可变字符串执行mutableCopy，也是深拷贝，会在内存中生成一个新的内容一样的可变字符串。 结论：对于NSMutableString,直接赋值是浅拷贝, copy和mutableCopy都为深拷贝,copy会产生一个不可变字符串对象，而mutableCopy会产生一个可变字符串对象 未完待续……]]></content>
+    </entry>
+
     
     <entry>
       <title><![CDATA[授之以渔:Hexo+GitHub全平台快速搭建博客绝对详解（三）]]></title>
-      <url>http://www.shiwenwen.top/2017/04/07/multi-platform-edit-add-domain-name-binding/</url>
-      <content type="html"><![CDATA[<blockquote>
-<p>本篇将介绍两点：</p>
-<blockquote>
-<p> 1.如何多台电脑同步编辑自己的博客</p>
-<p> 2.如何将自己的博客绑定自己的域名</p>
-</blockquote>
-</blockquote>
-<a id="more"></a>
-<h2 id="多台电脑同步编辑自己的博客"><a href="#多台电脑同步编辑自己的博客" class="headerlink" title="多台电脑同步编辑自己的博客"></a>多台电脑同步编辑自己的博客</h2><ul>
-<li><p>在github或者coding,bitbucket等git代码托管平台上新建一个仓库，用来存放hexo项目源文件。这里建议不使用github，因为github上的私有仓库是收费的，而我们的源文件中可能包含很多token之类的隐私信息，所以放在私有仓库会比较安全。这里我使用的是coding。<strong>（ps:我们也可以把博客同时部署在coding或者bitbucket上，与github类似，请参考前面两篇）</strong></p>
-</li>
-<li><p>将我们的hexo项目推送到建立好的远程仓库上，这里我们查看一下项目目录地下的 <strong>.gitignore</strong>文件中的内容，例如:</p>
-<pre><code>.DS_Store
-Thumbs.db
-db.json
-*.log
-node_modules/
-public/
-.deploy*/
-</code></pre><p>代表我们的git将忽略这些文件，以上文件都可以忽略。</p>
-</li>
-<li><p>如果我们安装了一些主题 请把这些主题下的 <strong>.git</strong> 文件删掉，如果有的话，或者我们把主题当做子模块，不推荐这样做，因为你的主题肯定是被你编辑过的，当做子模块克隆的时候会从远主题地址重新可能，你的配置就费了。所以建议删除 <strong>.git</strong>，一起添加到git。</p>
-</li>
-<li><p>我们在需要编辑博客的电脑上配置好hexo需要的环境，将hexo项目克隆下来。完成后我们需要进入项目目录，执行一下:</p>
-<pre><code>npm install
-</code></pre><p>来安装依赖。结束后开始编辑你的博客吧！<br>当我们结束改动后，把我们的操作推送到远程仓库上，其他电脑在编辑前先拉取一下就可以了，这样就保持了多台电脑都可以编辑我们的博客了。<font color="ff3737">记住，编辑前我们先pull，编辑后我们要push</font>。</p>
-</li>
-</ul>
-<h2 id="Hexo域名绑定"><a href="#Hexo域名绑定" class="headerlink" title="Hexo域名绑定"></a>Hexo域名绑定</h2><ul>
-<li>首先你得有个域名，如果没有的话，去买一个吧，我这里在阿里购买了一个<strong>.top</strong>的域名，首年才4元。<strong>.com</strong> 的首年五十多这样。</li>
-<li><p>配置域名解析如下，这里以阿里云和部署平台为github为例：</p>
-<ul>
-<li>进入阿里云控制台-&gt;域名与网站（万网）-&gt; 域名。<br><img src="/2017/04/07/multi-platform-edit-add-domain-name-binding/2.png" alt="解析"><br>选择域名解析，设置如下:<br><img src="/2017/04/07/multi-platform-edit-add-domain-name-binding/3.png" alt="域名解析"><br>现在浏览器输入你的域名，是不是就直接可以访问博客了！！<br>后来我将博客部署到了coding，解析设置如下:<br><img src="/2017/04/07/multi-platform-edit-add-domain-name-binding/coding.png" alt="域名解析"></li>
-</ul>
-<hr>
-<font color="ff3737" size="5">后期我将继续介绍如何被百度谷歌收录及其他配置。</font>
-</li>
-</ul>
-]]></content>
-      
-        <categories>
-            
-            <category> Hexo </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> Hexo </tag>
-            
-        </tags>
-        
+      <url>%2F2017%2F04%2F07%2Fmulti-platform-edit-add-domain-name-binding%2F</url>
+      <content type="text"><![CDATA[本篇将介绍两点： 1.如何多台电脑同步编辑自己的博客 2.如何将自己的博客绑定自己的域名 多台电脑同步编辑自己的博客 在github或者coding,bitbucket等git代码托管平台上新建一个仓库，用来存放hexo项目源文件。这里建议不使用github，因为github上的私有仓库是收费的，而我们的源文件中可能包含很多token之类的隐私信息，所以放在私有仓库会比较安全。这里我使用的是coding。（ps:我们也可以把博客同时部署在coding或者bitbucket上，与github类似，请参考前面两篇） 将我们的hexo项目推送到建立好的远程仓库上，这里我们查看一下项目目录地下的 .gitignore文件中的内容，例如: .DS_Store Thumbs.db db.json *.log node_modules/ public/ .deploy*/ 代表我们的git将忽略这些文件，以上文件都可以忽略。 如果我们安装了一些主题 请把这些主题下的 .git 文件删掉，如果有的话，或者我们把主题当做子模块，不推荐这样做，因为你的主题肯定是被你编辑过的，当做子模块克隆的时候会从远主题地址重新可能，你的配置就费了。所以建议删除 .git，一起添加到git。 我们在需要编辑博客的电脑上配置好hexo需要的环境，将hexo项目克隆下来。完成后我们需要进入项目目录，执行一下: npm install 来安装依赖。结束后开始编辑你的博客吧！当我们结束改动后，把我们的操作推送到远程仓库上，其他电脑在编辑前先拉取一下就可以了，这样就保持了多台电脑都可以编辑我们的博客了。记住，编辑前我们先pull，编辑后我们要push。 Hexo域名绑定 首先你得有个域名，如果没有的话，去买一个吧，我这里在阿里购买了一个.top的域名，首年才4元。.com 的首年五十多这样。 配置域名解析如下，这里以阿里云和部署平台为github为例： 进入阿里云控制台-&gt;域名与网站（万网）-&gt; 域名。选择域名解析，设置如下:现在浏览器输入你的域名，是不是就直接可以访问博客了！！后来我将博客部署到了coding，解析设置如下: 后期我将继续介绍如何被百度谷歌收录及其他配置。]]></content>
     </entry>
+
     
     <entry>
       <title><![CDATA[授之以渔:Hexo+GitHub全平台快速搭建博客绝对详解（二）]]></title>
-      <url>http://www.shiwenwen.top/2017/04/05/hexo-on-git/</url>
-      <content type="html"><![CDATA[<blockquote>
-<p>Hexo的优越之处正是在于可以步数到GitHub等平台,在介绍完如果搭建使用Hexo之后，我们来详细介绍下如何方便快速的部署到GitHub。</p>
-<blockquote>
-<p><strong><font color="ff3737">本文在mac上写的，所以以mac为例，Linux类似。</font></strong></p>
-</blockquote>
-</blockquote>
-<a id="more"></a>
-<h2 id="建立博客的git仓库"><a href="#建立博客的git仓库" class="headerlink" title="建立博客的git仓库"></a>建立博客的git仓库</h2><ul>
-<li><p>首先，你得有一个GitHub的账号，如果没有请自行<a href="https://github.com/" target="_blank" rel="external">注册</a>。</p>
-</li>
-<li><p>然后，建立一个仓库，命名为:<font color="ff3737">&#8194;&lt;你的GitHub用户名&gt;.github.io&#8194;</font> 。这里一定要以这种格式命名，这是固定格式，例如: <strong>zhangsan.github.io</strong>。</p>
-</li>
-</ul>
-<h2 id="发布到GitHub"><a href="#发布到GitHub" class="headerlink" title="发布到GitHub"></a>发布到GitHub</h2><ul>
-<li><p>编辑hexo项目中的<strong>_config.yml</strong>文件,将<strong>deploy:</strong>修改如下:</p>
-<pre><code>deploy:
-    type: git
-    repo: &lt;这里填你建立的博客仓库的地址,如: git@github.com:zhangsan/zhangsan.github.io.git&gt;
-    branch: master
-</code></pre><p>  保存。</p>
-</li>
-<li><p>安装hexo-deployer-git:</p>
-<pre><code>npm install hexo-deployer-git --save
-</code></pre></li>
-<li><p>生成和部署git,执行</p>
-<pre><code>hexo g -d
-</code></pre><p>这是简写格式，更多信息可以参考官方文档的<a href="https://hexo.io/zh-cn/docs/generating.html" target="_blank" rel="external">生成器</a>和<a href="https://hexo.io/zh-cn/docs/deployment.html" target="_blank" rel="external">部署</a>    。</p>
-<ul>
-<li><p><strong>部署过程中会提示你输入GitHub的用户名和密码，正确输入即可，后边将会介绍如何配置免输入直接部署</strong>。</p>
-<p>部署完成后，浏览器输入 <strong>https://&lt;你的GitHub博客项目名&gt;</strong>,如我的博客<a href="https://swwgit.github.io" target="_blank" rel="external">https://swwgit.github.io</a>。</p>
-</li>
-</ul>
-</li>
-</ul>
-<font color="ff3737" size="5">是不是已经看到了自己的博客网站已经建好了呢</font>
-
-<h2 id="部署到GitHub的SSH配置"><a href="#部署到GitHub的SSH配置" class="headerlink" title="部署到GitHub的SSH配置"></a>部署到GitHub的SSH配置</h2><ul>
-<li><p>生成rsa秘钥</p>
-<pre><code>ssh-keygen -t rsa -C &quot;GitHub注册邮箱&quot;
-</code></pre><p>回车，会提示你秘钥的保存路径，如果你有生成过其他秘钥，这里建议改名（=，否则会覆盖其他秘钥，或者你有多个GitHub账户之类的，为了区分，这里也建议你改名，但是不要改路径。如果你不改名，回车便可以了（<strong><font color="ff3737">如果你改名了,请看一下最底下的附：关于电脑上有多个GitHub账户和改名默认rsa文件后SSH GitHub失败的配置。</font></strong>）。</p>
-<p>  接着会提示你输入密码，这里是设置rsa加密文件的密码,不需要设置，一路回车就可以了。</p>
-</li>
-<li><p>设置GitHub的SSH Key</p>
-<p>  打开刚刚生成的秘钥对中的公钥,就是秘钥保存路径下的 <strong>秘钥文件名.pub</strong> 文件，如果 <strong>githubSSH_rsa.pub</strong> 。打开后，将文件中的内容全选拷贝。打开<a href="https://github.com/settings/keys" target="_blank" rel="external">GitHub SSH设置</a>,选择 <strong>New SSH Key</strong> ,将刚刚拷贝的内容粘贴到<strong>key</strong>中，<strong>Title</strong>自己随意取名或者不填都可以。点击 <strong>Add SSH key</strong> 完成添加。</p>
-</li>
-<li><p>设置Git全局配置<br>  终端输入:</p>
-<pre><code>git config --global user.name &quot;你的GitHub用户名&quot;
-git config --global user.email &quot;你的GitHub邮箱&quot;
-</code></pre></li>
-<li><p>测试GitHub连接<br>  终端输入:</p>
-<pre><code>ssh -T git@github.com
-</code></pre><p>  如果有警告请直接输入yes，提示 <strong>successfully</strong> 则代表上面SSH配置链接成功。</p>
-</li>
-</ul>
-<hr>
-<p>完成上面步骤后，进入hexo项目路径，执行</p>
-<pre><code>hexo g -d
-</code></pre><p><strong>是不是就可以自动部署到GitHub中了!</strong></p>
-<h2 id="附：关于电脑上有多个GitHub账户和改名默认rsa文件后SSH-GitHub失败的配置"><a href="#附：关于电脑上有多个GitHub账户和改名默认rsa文件后SSH-GitHub失败的配置" class="headerlink" title="附：关于电脑上有多个GitHub账户和改名默认rsa文件后SSH GitHub失败的配置"></a>附：关于电脑上有多个GitHub账户和改名默认rsa文件后SSH GitHub失败的配置</h2><font size="4"><br>    如果电脑上有生成过SSH秘钥，那么在生成心得秘钥时，必然是要改名的，否则就会覆盖以前的，但是改名之后，系统是认不出的，所以需要自己配置下。<br></font>
-
-
-<ul>
-<li>打开rsa秘钥的保存路径下的config文件,(如果没有，新建一个即可，没有后缀名)。</li>
-<li><p>对应每添加一个GitHub账户，在文件中都要加入一份如下配置:</p>
-<pre><code>Host github.com  //GitHub的Host地址
-HostName github.com //Host的名字
-User zhangsan //用户
-IdentityFile /Users/zhangsan/.ssh/zhangsan_git_rsa //rsa秘钥（私钥）的绝对路径
-</code></pre></li>
-</ul>
-<p>保存即可。</p>
-<h2 id="markdown编辑器推荐"><a href="#markdown编辑器推荐" class="headerlink" title="markdown编辑器推荐"></a>markdown编辑器推荐</h2><ul>
-<li><a href="http://www.atom.io" target="_blank" rel="external">atom</a> :跨平台的编辑器，拥有很多插件，markdown的编辑和预览非常不错。</li>
-<li><a href="http://macdown.uranusjr.com" target="_blank" rel="external">MacDown</a> : mac平台上非常简洁好用的markdown专用的编辑器。</li>
-</ul>
-<font color="#ff3737" size="4" face="黑体">下一篇将详细介绍如何多在台电脑上编辑博客已经域名绑定。</font>
-]]></content>
-      
-        <categories>
-            
-            <category> Hexo </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> Hexo </tag>
-            
-        </tags>
-        
+      <url>%2F2017%2F04%2F05%2Fhexo-on-git%2F</url>
+      <content type="text"><![CDATA[Hexo的优越之处正是在于可以步数到GitHub等平台,在介绍完如果搭建使用Hexo之后，我们来详细介绍下如何方便快速的部署到GitHub。 本文在mac上写的，所以以mac为例，Linux类似。 建立博客的git仓库 首先，你得有一个GitHub的账号，如果没有请自行注册。 然后，建立一个仓库，命名为:&#8194;&lt;你的GitHub用户名&gt;.github.io&#8194; 。这里一定要以这种格式命名，这是固定格式，例如: zhangsan.github.io。 发布到GitHub 编辑hexo项目中的_config.yml文件,将deploy:修改如下: deploy: type: git repo: &lt;这里填你建立的博客仓库的地址,如: git@github.com:zhangsan/zhangsan.github.io.git&gt; branch: master 保存。 安装hexo-deployer-git: npm install hexo-deployer-git --save 生成和部署git,执行 hexo g -d 这是简写格式，更多信息可以参考官方文档的生成器和部署 。 部署过程中会提示你输入GitHub的用户名和密码，正确输入即可，后边将会介绍如何配置免输入直接部署。 部署完成后，浏览器输入 https://&lt;你的GitHub博客项目名&gt;,如我的博客https://swwgit.github.io。 是不是已经看到了自己的博客网站已经建好了呢 部署到GitHub的SSH配置 生成rsa秘钥 ssh-keygen -t rsa -C &quot;GitHub注册邮箱&quot; 回车，会提示你秘钥的保存路径，如果你有生成过其他秘钥，这里建议改名（=，否则会覆盖其他秘钥，或者你有多个GitHub账户之类的，为了区分，这里也建议你改名，但是不要改路径。如果你不改名，回车便可以了（如果你改名了,请看一下最底下的附：关于电脑上有多个GitHub账户和改名默认rsa文件后SSH GitHub失败的配置。）。 接着会提示你输入密码，这里是设置rsa加密文件的密码,不需要设置，一路回车就可以了。 设置GitHub的SSH Key 打开刚刚生成的秘钥对中的公钥,就是秘钥保存路径下的 秘钥文件名.pub 文件，如果 githubSSH_rsa.pub 。打开后，将文件中的内容全选拷贝。打开GitHub SSH设置,选择 New SSH Key ,将刚刚拷贝的内容粘贴到key中，Title自己随意取名或者不填都可以。点击 Add SSH key 完成添加。 设置Git全局配置 终端输入: git config --global user.name &quot;你的GitHub用户名&quot; git config --global user.email &quot;你的GitHub邮箱&quot; 测试GitHub连接 终端输入: ssh -T git@github.com 如果有警告请直接输入yes，提示 successfully 则代表上面SSH配置链接成功。 完成上面步骤后，进入hexo项目路径，执行 hexo g -d 是不是就可以自动部署到GitHub中了! 附：关于电脑上有多个GitHub账户和改名默认rsa文件后SSH GitHub失败的配置 如果电脑上有生成过SSH秘钥，那么在生成心得秘钥时，必然是要改名的，否则就会覆盖以前的，但是改名之后，系统是认不出的，所以需要自己配置下。 打开rsa秘钥的保存路径下的config文件,(如果没有，新建一个即可，没有后缀名)。 对应每添加一个GitHub账户，在文件中都要加入一份如下配置: Host github.com //GitHub的Host地址 HostName github.com //Host的名字 User zhangsan //用户 IdentityFile /Users/zhangsan/.ssh/zhangsan_git_rsa //rsa秘钥（私钥）的绝对路径 保存即可。 markdown编辑器推荐 atom :跨平台的编辑器，拥有很多插件，markdown的编辑和预览非常不错。 MacDown : mac平台上非常简洁好用的markdown专用的编辑器。 下一篇将详细介绍如何多在台电脑上编辑博客已经域名绑定。]]></content>
     </entry>
+
     
     <entry>
       <title><![CDATA[授之以渔:Hexo+GitHub全平台快速搭建博客绝对详解（一）]]></title>
-      <url>http://www.shiwenwen.top/2017/04/01/howtousehexo/</url>
-      <content type="html"><![CDATA[<ul>
-<li><p>前言:</p>
-<blockquote>
-<p>学习了很多，研究了很多，用上的却很少，总该写点什么了，便搭建了这个博客。所以第一篇，我就来详解一下如何用Hexo+GitHub搭建自己的博客。<strong>关于Hexo的使用，网上有很多参差不齐的介绍，这里我将一步步从头到尾的精讲一下</strong>。</p>
-<p>关于Hexo的介绍，我就不多说了，用官方的话说就是：</p>
-<blockquote>
-<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
-</blockquote>
-<p>之所以采用Hexo+GitHub搭建博客，除了简单好用，插件主题够多，最主要的原因是可以直接部署的GitHUb上，不需要租服务器。</p>
-</blockquote>
-</li>
-</ul>
-<a id="more"></a>
-<h1 id="环境部署"><a href="#环境部署" class="headerlink" title="环境部署"></a>环境部署</h1><h2 id="Hexo的安装很简单-首先需要安装node-js和git"><a href="#Hexo的安装很简单-首先需要安装node-js和git" class="headerlink" title="Hexo的安装很简单,首先需要安装node.js和git"></a>Hexo的安装很简单,首先需要安装node.js和git</h2><h3 id="安装git"><a href="#安装git" class="headerlink" title="安装git"></a>安装git</h3><ul>
-<li><strong>window:</strong><ul>
-<li>下载安装<a href="https://git-scm.com/download/win" target="_blank" rel="external">git</a>，<a href="https://github.com/waylau/git-for-win" target="_blank" rel="external">推荐国内下载站</a>。<ul>
-<li>配置git环境变量，将Git的安装目录下的bin目录路径添加的环境变量Path中，如 C:\Program Files\Git\bin。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>Mac:</strong></p>
-<ul>
-<li><p>首先如果你的电脑没有安装Xcode 和 Xcode Command Line Tools 请先安装Xcode，App Store下载即可,然后打开终端输入</p>
-<pre><code>xcode-select --install
-</code></pre><p>回车,一路安装即可,如果提示command line tools are already installed则代表已经安装过了。</p>
-</li>
-<li><p>安装HomeBrew，HomeBrew是mac下的一个包管理器。打开<a href="https://brew.sh/" target="_blank" rel="external">HomeBrew</a>,复制页面中的</p>
-<pre><code>/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
-</code></pre><p>粘贴到终端中，回车，安装。</p>
-</li>
-<li><p>安装MacPorts,打开<a href="https://www.macports.org/install.php" target="_blank" rel="external">MacPorts</a>，下载对于自己系统版本的MacPorts,安装。</p>
-</li>
-<li><p>安装git,终端输入 brew install git 执行安装即可。</p>
-</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><p><strong>Linux (本教程以Ubuntu为例)</strong></p>
-<p> 打开终端，输入</p>
-<pre><code>sudo apt-get install
-</code></pre><p>  执行安装即可。            </p>
-</li>
-</ul>
-<h3 id="安装Node-js-推荐使用nvm来管理安装node"><a href="#安装Node-js-推荐使用nvm来管理安装node" class="headerlink" title="安装Node.js(推荐使用nvm来管理安装node)"></a>安装Node.js(推荐使用nvm来管理安装node)</h3><ul>
-<li><p><strong>windows:</strong></p>
-<ul>
-<li><a href="https://nodejs.org/en/" target="_blank" rel="external">直接下载</a>,安装即可。<strong>安装时，请勾选Add to PATH选项</strong>。</li>
-<li>或者参考这篇文章，使用nvm来安装配置node:<a href="http://blog.csdn.net/tyro_java/article/details/51232458" target="_blank" rel="external">nodejs在windows下的安装配置(使用NVM的方式)</a></li>
-</ul>
-</li>
-<li><p><strong>mac :</strong></p>
-<ul>
-<li><p>终端输入</p>
-<pre><code>brew install nvm
-</code></pre><p>安装好nvm。</p>
-</li>
-<li><p>安装node,输入</p>
-<pre><code>nvm ls-remote  
-</code></pre><p> 查看远端库里的node版本。如图:</p>
-<p> <img src="/2017/04/01/howtousehexo/1.png" alt="nvm ls-remote"></p>
-<p> 选择node相应版本安装(同时会安装对应的npm)，如:</p>
-<pre><code>nvm install v7.8.0
-</code></pre><p>或者使用</p>
-<pre><code>nvm install stable
-</code></pre><p>安装当前最稳定版本。<br> 安装完成后,输入</p>
-<pre><code>node -v
-</code></pre><p> 查看版本号，检查是否安装成功。</p>
-<p> 我们可以安装多个版本，通过:</p>
-<pre><code>nvm use &quot;版本号&quot;
-</code></pre><p> 来切换版本,如：</p>
-<p> <img src="/2017/04/01/howtousehexo/2.png" alt="nvm use"></p>
-</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><p><strong>Linux (本教程以Ubuntu为例)</strong></p>
-<ul>
-<li><p>终端输入</p>
-<pre><code>sudo apt-get update
-sudo apt-get install build-essential libssl-dev
-</code></pre><p>安装必要的包。</p>
-</li>
-<li><p>进入<a href="https://github.com/creationix/nvm" target="_blank" rel="external">nvm github</a> 查看nvm的tag号,即已发布的版本号。<br>   <img src="/2017/04/01/howtousehexo/3.png" alt="nvm version"></p>
-<p>  然后执行（<strong>版本号可对应替换</strong>）</p>
-<pre><code>curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash  
-</code></pre><p>  或者      </p>
-<pre><code>wget -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash                  
-</code></pre><p>  安装成功后,关闭终端,重新打开终端,执行</p>
-<pre><code>nvm --version
-</code></pre><p>  查看nvm是否安装成功。</p>
-</li>
-<li><p>安装node,输入</p>
-<pre><code>nvm ls-remote  
-</code></pre><p>  查看远端库里的node版本。如图:</p>
-<p>  <img src="/2017/04/01/howtousehexo/4.jpeg" alt="nvm ls-remote"></p>
-<p>  选择node相应版本安装(同时会安装对应的npm)，如:</p>
-<pre><code>nvm install v7.8.0
-</code></pre><p>或者使用</p>
-<pre><code>nvm install stable
-</code></pre><p>安装当前最稳定版本。</p>
-<p>  安装完成后,输入</p>
-<pre><code>node --vresion
-</code></pre><p>  查看版本号，检查是否安装成功。</p>
-<p>  我们可以安装多个版本，通过:</p>
-<pre><code>nvm use &quot;版本号&quot;
-</code></pre><p>  来切换版本,如：</p>
-<p>  <img src="/2017/04/01/howtousehexo/5.jpeg" alt="nvm use">                    </p>
-</li>
-</ul>
-</li>
-<li><p><strong>最后，重头戏到了</strong>    ,安装Hexo</p>
-<p>  执行</p>
-<pre><code>npm install -g hexo-cli
-</code></pre></li>
-</ul>
-<p>–</p>
-<h3 id="开始使用-Hexo"><a href="#开始使用-Hexo" class="headerlink" title="开始使用 Hexo"></a>开始使用 Hexo</h3><p>快速开始，终端输入</p>
-<pre><code>hexo init &lt;folder&gt;
-cd &lt;folder&gt;
-</code></pre><p>或者</p>
-<pre><code>mkdir &lt;folder&gt;
-cd folder
-hexo init
-</code></pre><p>生成项目后,可以直接运行</p>
-<pre><code>hexo server
-</code></pre><p>然后浏览器打开 <a href="http://localhost:4000/" target="_blank" rel="external">http://localhost:4000/</a>,进行本地预览。</p>
-<p>这一部分，可以直接阅读<a href="https://hexo.io/docs/index.html" target="_blank" rel="external">官方文档</a>,可选选择中文，如果有不明白的地方，欢迎提问。关于主题使用，主题作者都是写明对应主题的使用方法。</p>
-<font color="#ff3737" size="4" face="黑体">下一篇将详细介绍如何部署到git和如何多台电脑编辑。</font>
-]]></content>
-      
-        <categories>
-            
-            <category> Hexo </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> Hexo </tag>
-            
-        </tags>
-        
+      <url>%2F2017%2F04%2F01%2Fhowtousehexo%2F</url>
+      <content type="text"><![CDATA[前言: 学习了很多，研究了很多，用上的却很少，总该写点什么了，便搭建了这个博客。所以第一篇，我就来详解一下如何用Hexo+GitHub搭建自己的博客。关于Hexo的使用，网上有很多参差不齐的介绍，这里我将一步步从头到尾的精讲一下。 关于Hexo的介绍，我就不多说了，用官方的话说就是： Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。 之所以采用Hexo+GitHub搭建博客，除了简单好用，插件主题够多，最主要的原因是可以直接部署的GitHUb上，不需要租服务器。 环境部署Hexo的安装很简单,首先需要安装node.js和git安装git window: 下载安装git，推荐国内下载站。 配置git环境变量，将Git的安装目录下的bin目录路径添加的环境变量Path中，如 C:\Program Files\Git\bin。 Mac: 首先如果你的电脑没有安装Xcode 和 Xcode Command Line Tools 请先安装Xcode，App Store下载即可,然后打开终端输入 xcode-select --install 回车,一路安装即可,如果提示command line tools are already installed则代表已经安装过了。 安装HomeBrew，HomeBrew是mac下的一个包管理器。打开HomeBrew,复制页面中的 /usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot; 粘贴到终端中，回车，安装。 安装MacPorts,打开MacPorts，下载对于自己系统版本的MacPorts,安装。 安装git,终端输入 brew install git 执行安装即可。 Linux (本教程以Ubuntu为例) 打开终端，输入 sudo apt-get install 执行安装即可。 安装Node.js(推荐使用nvm来管理安装node) windows: 直接下载,安装即可。安装时，请勾选Add to PATH选项。 或者参考这篇文章，使用nvm来安装配置node:nodejs在windows下的安装配置(使用NVM的方式) mac : 终端输入 brew install nvm 安装好nvm。 安装node,输入 nvm ls-remote 查看远端库里的node版本。如图: 选择node相应版本安装(同时会安装对应的npm)，如: nvm install v7.8.0 或者使用 nvm install stable 安装当前最稳定版本。 安装完成后,输入 node -v 查看版本号，检查是否安装成功。 我们可以安装多个版本，通过: nvm use &quot;版本号&quot; 来切换版本,如： Linux (本教程以Ubuntu为例) 终端输入 sudo apt-get update sudo apt-get install build-essential libssl-dev 安装必要的包。 进入nvm github 查看nvm的tag号,即已发布的版本号。 然后执行（版本号可对应替换） curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash 或者 wget -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash 安装成功后,关闭终端,重新打开终端,执行 nvm --version 查看nvm是否安装成功。 安装node,输入 nvm ls-remote 查看远端库里的node版本。如图: 选择node相应版本安装(同时会安装对应的npm)，如: nvm install v7.8.0 或者使用 nvm install stable 安装当前最稳定版本。 安装完成后,输入 node --vresion 查看版本号，检查是否安装成功。 我们可以安装多个版本，通过: nvm use &quot;版本号&quot; 来切换版本,如： 最后，重头戏到了 ,安装Hexo 执行 npm install -g hexo-cli – 开始使用 Hexo快速开始，终端输入 hexo init &lt;folder&gt; cd &lt;folder&gt; 或者 mkdir &lt;folder&gt; cd folder hexo init 生成项目后,可以直接运行 hexo server 然后浏览器打开 http://localhost:4000/,进行本地预览。 这一部分，可以直接阅读官方文档,可选选择中文，如果有不明白的地方，欢迎提问。关于主题使用，主题作者都是写明对应主题的使用方法。 下一篇将详细介绍如何部署到git和如何多台电脑编辑。]]></content>
     </entry>
+
     
   
   
