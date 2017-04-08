@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://shiwenwen.top/"/>
-  <updated>2017-04-08T02:21:57.000Z</updated>
+  <updated>2017-04-08T03:13:39.000Z</updated>
   <id>http://shiwenwen.top/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/"/>
     <id>http://shiwenwen.top/2017/04/07/talking-about-oc-copy/</id>
     <published>2017-04-07T06:31:14.000Z</published>
-    <updated>2017-04-08T02:21:57.000Z</updated>
+    <updated>2017-04-08T03:13:39.000Z</updated>
     
     <content type="html"><![CDATA[<blockquote>
 <p>关于深浅拷贝，已经是个老生常谈的问题了，自己曾经也有在面试中被问过，最近有个朋友问到过这个问题，借此机会，我们来细谈一下深浅拷贝的问题。</p>
@@ -58,7 +58,16 @@
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSMutableString</span> *s7 = [s4 mutableCopy];</div><div class="line">[s7 appendString:<span class="string">@"##~_~"</span>];</div></pre></td></tr></table></figure>
 <p>运行没有任何问题，结果如下:<br><img src="/2017/04/07/talking-about-oc-copy/s7.png" alt="s7"><br>可以看出,s7是一个可变对象，但是对s7的操作并没有影响到s4,s5。所以可变字符串执行mutableCopy，也是深拷贝，会在内存中生成一个新的内容一样的可变字符串。</p>
 <p><strong>结论：对于NSMutableString,直接赋值是浅拷贝, copy和mutableCopy都为深拷贝,copy会产生一个不可变字符串对象，而mutableCopy会产生一个可变字符串对象</strong></p>
-<h2 id="未完待续……"><a href="#未完待续……" class="headerlink" title="未完待续……"></a>未完待续……</h2>]]></content>
+<h3 id="容器类-此处以Arrary为例，NSSet-Dictionary一样。"><a href="#容器类-此处以Arrary为例，NSSet-Dictionary一样。" class="headerlink" title="容器类 此处以Arrary为例，NSSet,Dictionary一样。"></a>容器类 此处以Arrary为例，NSSet,Dictionary一样。</h3><p>首先我们来看一下不可变数组，如下:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">Person *p1 = [[Person alloc]initWithName:<span class="string">@"p1"</span> height:<span class="number">175</span> age:<span class="number">21</span>];</div><div class="line">Person *p2 = [[Person alloc]initWithName:<span class="string">@"p2"</span> height:<span class="number">176</span> age:<span class="number">22</span>];</div><div class="line">Person *p3 = [[Person alloc]initWithName:<span class="string">@"p3"</span> height:<span class="number">177</span> age:<span class="number">23</span>];</div><div class="line">   </div><div class="line"><span class="built_in">NSArray</span> *a1 = @[p1,p2,p3];</div><div class="line"><span class="built_in">NSArray</span> *a2 = a1;</div><div class="line"><span class="built_in">NSArray</span> *a3 = [a1 <span class="keyword">copy</span>];</div><div class="line"><span class="built_in">NSArray</span> *a4 = [a1 mutableCopy];</div></pre></td></tr></table></figure>
+<p>运行后我们查看各个数组如下:<br><img src="/2017/04/07/talking-about-oc-copy/NSArrary.png" alt="NSArrary"><br>我们可以看出直接赋值的a2和copy出的a3都是对a1浅拷贝，都是同一个数组对象。a4则是新的可变数组对象(虽然我用NSArray声明的a4,但是从打印结果可以看出a4是一个可变数组)，可其中的元素内容却还是一样的。可见对NSArrary的mutableCopy是对数组本身的深拷贝，但是对数组中的元素还是浅拷贝。</p>
+<p><strong>结论：对于不可变容器类, copy和直接赋值是浅拷贝，类容器对象本身和容器中的元素都是浅拷贝。mutableCopy为对容器对象本身的深拷贝,产生一个新的可变的容器对象，但是对于容器中的元素，为浅拷贝</strong></p>
+<p>我们接着用上面生成的a4来看一下可变数组的拷贝:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSMutableArray</span> *a4 = [a1 mutableCopy];<span class="comment">//我们改用NSMutableArray声明</span></div><div class="line"><span class="built_in">NSMutableArray</span> *a5 = a4;</div><div class="line"><span class="built_in">NSMutableArray</span> *a6 = [a4 <span class="keyword">copy</span>];</div><div class="line"><span class="built_in">NSMutableArray</span> *a7 = [a4 mutableCopy];</div></pre></td></tr></table></figure>
+<p>运行后我们查看各个数组如下:<br><img src="/2017/04/07/talking-about-oc-copy/mutableArray.png" alt="mutableArray"><br>我们可以看出，直接赋值的a5是浅拷贝，copy出的a6，数组对象发生了变化，生成了一个新的不可变数组(虽然这里是NSMutableArray声明的，但是从打印结果可以看出是一个不可变数组)，但是元素内容依旧没有改变。所以是对容器对象深拷贝，其中元素的浅拷贝。使用mutableCopy，也是深拷贝，产生了一个新的可变数组，元素内容也没有改变。还是是对容器对象深拷贝，其中元素的浅拷贝。</p>
+<p><strong>结论：对于可变容器类, 直接赋值是浅拷贝，类容器对象本身和容器中的元素都是浅拷贝。copy和mutableCopy为对容器对象本身的深拷贝, copy产生一个新的不可变的容器、mutableCopy产生一个新的可变的容器对象，但是对于容器中的元素，为浅拷贝</strong></p>
+<p><strong><em>ps:实际上，上面的所有直接赋值，都是retain的过程，是浅拷贝，但是引用计数会增加</em></strong></p>
+]]></content>
     
     <summary type="html">
     
