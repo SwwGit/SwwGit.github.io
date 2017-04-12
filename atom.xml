@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://shiwenwen.top/"/>
-  <updated>2017-04-08T03:13:39.000Z</updated>
+  <updated>2017-04-12T12:14:06.000Z</updated>
   <id>http://shiwenwen.top/</id>
   
   <author>
@@ -14,6 +14,90 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用Tableview可能产生的循环引用</title>
+    <link href="http://shiwenwen.top/2017/04/12/circular-reference/"/>
+    <id>http://shiwenwen.top/2017/04/12/circular-reference/</id>
+    <published>2017-04-12T09:26:40.000Z</published>
+    <updated>2017-04-12T12:14:06.000Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote>
+<p>循环引用在iOS开发中是个老生常谈的问题了,虽然ARC可以让你不用太去关心对象的释放问题，但是它并不能解决所有问题，例如循环引用。虽然这是这个大家都懂的问题，但是总会有很多人有疏忽。本文讲的就是一个实在的例子。</p>
+<blockquote>
+<p>同事的代码出现了一个有趣的问题，让我帮忙检查，所有就有了这篇文章。</p>
+</blockquote>
+</blockquote>
+<a id="more"></a>
+<h3 id="故事背景"><a href="#故事背景" class="headerlink" title="故事背景"></a>故事背景</h3><p>　　公司测试在同事的模块时，发现了一个问题，有一个本该发送一次的请求，会经常同时发送好多次。然而他看了半天也没找到问题，我便去看了一下。问题是这个样子的：</p>
+<blockquote>
+<p>　有一个控制器A，里面注册了一个通知，然后在收到通知后，发送一个请求。然后在另一个控制器里发送的通知。</p>
+<p>检查后，确信通知是只发送了一次，但是有时候会发送多次请求，而有时候只发送一次。测试了一下，我发现如果控制器A被多次用到过，请求就会发送多次，所以我在A控制器中发送请求的方法里打印了一下当前执行请求方法的A的实例(self)，并在dealloc中打印了标记。果然，每一个实例的地址都不一样，并且dealloc一次都没有执行过。所以，很明显，那些本该被销毁的对象都没被销毁，导致每一个都发送了请求。</p>
+</blockquote>
+<h3 id="查看代码，寻找问题"><a href="#查看代码，寻找问题" class="headerlink" title="查看代码，寻找问题"></a>查看代码，寻找问题</h3><p>我看到控制A中，定义了一些实例变量:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">UITableView</span> *_tableView;</div><div class="line">AObject *_someObj;</div></pre></td></tr></table></figure>
+<p>这这意味着，_tableView是被A强引用的，_tableView的dataSource和delegate是A，但是dataSource和delegate都是weak声明的，所以_tableView和A之间是不存在循环引用的。</p>
+<p>在实现dataSource的方法中，我注意到cell有一个block在这里实现了:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">UITableViewCell</span> *)tableView:(<span class="built_in">UITableView</span> *)tableView cellForRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath &#123;</div><div class="line">	......</div><div class="line">	cell.clickButtonBlock = ^(<span class="built_in">NSInteger</span> buttonTag)&#123;</div><div class="line">		otherObj = _someObj;</div><div class="line">		[<span class="keyword">self</span> doSomeThing];</div><div class="line">	&#125;</div><div class="line">	......</div><div class="line">	<span class="keyword">return</span> cell;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里cell其实是被_tableView所持有的，而_tableView是被A持有的，在cell实现block时，捕获了self，强持有了A,结果导致了循环引用。致使A控制器在该从界面中被pop或者dismiss后等该销毁时没有被销毁。我们将代码修改如下:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">UITableViewCell</span> *)tableView:(<span class="built_in">UITableView</span> *)tableView cellForRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath &#123;</div><div class="line">	......</div><div class="line">	__<span class="keyword">weak</span> <span class="keyword">typeof</span>(<span class="keyword">self</span>)weakSelf = <span class="keyword">self</span>;</div><div class="line">	cell.clickButtonBlock = ^(<span class="built_in">NSInteger</span> buttonTag)&#123;</div><div class="line">	<span class="comment">//这里我们不担心self会提前销毁，所以不再使用strong声明。</span></div><div class="line">		otherObj = _someObj;</div><div class="line">		[weakSelf doSomeThing];</div><div class="line">	&#125;</div><div class="line">	......</div><div class="line">	<span class="keyword">return</span> cell;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们用声明了一个weakSelf来断开block与A直接的强引用,但是这样改完后，还是不行的，因为这里的_someObj作为A的一个成员变量，也是被强引用，所以这里我们同样的需要把_someObj处理下：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">UITableViewCell</span> *)tableView:(<span class="built_in">UITableView</span> *)tableView cellForRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath &#123;</div><div class="line">	......</div><div class="line">	__<span class="keyword">weak</span> <span class="keyword">typeof</span>(<span class="keyword">self</span>)weakSelf = <span class="keyword">self</span>;</div><div class="line">		__<span class="keyword">weak</span> <span class="keyword">typeof</span>(_someObj)weakSomeObj = _someObj;</div><div class="line">	cell.clickButtonBlock = ^(<span class="built_in">NSInteger</span> buttonTag)&#123;</div><div class="line">	<span class="comment">//这里我们不担心self会提前销毁，所以不再使用strong声明。</span></div><div class="line">		otherObj = weakSomeObj;</div><div class="line">		[weakSelf doSomeThing];</div><div class="line">	&#125;</div><div class="line">	......</div><div class="line">	<span class="keyword">return</span> cell;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>这样,这个问题就此解决了。</strong></p>
+<p><strong>虽然这是一个简单的小问题，也是比较常见的问题，所以我希望大家都注意下类似的问题，不要疏忽了。</strong></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;循环引用在iOS开发中是个老生常谈的问题了,虽然ARC可以让你不用太去关心对象的释放问题，但是它并不能解决所有问题，例如循环引用。虽然这是这个大家都懂的问题，但是总会有很多人有疏忽。本文讲的就是一个实在的例子。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;同事的代码出现了一个有趣的问题，让我帮忙检查，所有就有了这篇文章。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="iOS" scheme="http://shiwenwen.top/tags/iOS/"/>
+    
+      <category term="OC" scheme="http://shiwenwen.top/tags/OC/"/>
+    
+      <category term="[object Object]" scheme="http://shiwenwen.top/tags/object-Object/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Ubuntu中使用CLion编写swift(3.1)代码</title>
+    <link href="http://shiwenwen.top/2017/04/09/swift-on-Linux-with-CLion/"/>
+    <id>http://shiwenwen.top/2017/04/09/swift-on-Linux-with-CLion/</id>
+    <published>2017-04-09T14:33:49.000Z</published>
+    <updated>2017-04-12T09:25:40.000Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote>
+<p>苹果开源swift是对广大开发者的福利，swift不仅可以在mac上运行，也支持Linux，后期还将会支持更多平台。如果你想学习swift开发，又没有mac，那么你就该用Ubuntu了。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="本文不涉及swift的教程，我也是参考别人的帖子来的，想在Ubuntu中使用可以支持swift的IDE，请大家看这篇帖子-手把手教你在Ubuntu上优雅地玩Swift"><a href="#本文不涉及swift的教程，我也是参考别人的帖子来的，想在Ubuntu中使用可以支持swift的IDE，请大家看这篇帖子-手把手教你在Ubuntu上优雅地玩Swift" class="headerlink" title="本文不涉及swift的教程，我也是参考别人的帖子来的，想在Ubuntu中使用可以支持swift的IDE，请大家看这篇帖子:手把手教你在Ubuntu上优雅地玩Swift"></a>本文不涉及swift的教程，我也是参考别人的帖子来的，想在Ubuntu中使用可以支持swift的IDE，请大家看这篇帖子:<a href="http://blog.csdn.net/vic_357/article/details/50786676" target="_blank" rel="external">手把手教你在Ubuntu上优雅地玩Swift</a></h2><p>因为帖子是基于swift2.2的，所以需要修改一点东西。<br>在添加Extermal Tools时我们将clean命令修改下，因为在swift3以后,之前的清除命令开始废除了。<br>修改如下：<br><img src="/2017/04/09/swift-on-Linux-with-CLion/1.png" alt="swift-clean"><br>clean 命令现在是swift-package的一部分了。<br>我们再添加一个reset的命令，clean只是清除编译生成的东西，而reset会将swift包依赖等全部删除重置。<br>添加如下:<br><img src="/2017/04/09/swift-on-Linux-with-CLion/2.png" alt="swift-clean"></p>
+<p>剩下的按照原贴来便可以了。<br>ps:现在的CLion在安装时就会提示安装swift插件，我们选上就可以了，不需要单独下载。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;苹果开源swift是对广大开发者的福利，swift不仅可以在mac上运行，也支持Linux，后期还将会支持更多平台。如果你想学习swift开发，又没有mac，那么你就该用Ubuntu了。&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+      <category term="swift" scheme="http://shiwenwen.top/categories/swift/"/>
+    
+    
+      <category term="swift" scheme="http://shiwenwen.top/tags/swift/"/>
+    
+      <category term="Linux" scheme="http://shiwenwen.top/tags/Linux/"/>
+    
+  </entry>
   
   <entry>
     <title>细谈OC中的深浅拷贝</title>
