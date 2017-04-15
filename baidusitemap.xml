@@ -4,8 +4,28 @@
 
     
   <url>
+    <loc>http://shiwenwen.top/2017/04/14/swiftPackageDemo/</loc>
+    <lastmod>2017-04-15T03:35:08.000Z</lastmod>
+    <data>
+        <display>
+        <title>Swift Package Manager 使用详解</title>
+        <pubTime>2017-04-13T16:42:08.000Z</pubTime>
+        
+        <tag>swift</tag>
+         
+         
+           
+             
+              <breadCrumb title="swift" url="http://shiwenwen.top/categories/swift/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://shiwenwen.top/2017/04/12/circular-reference/</loc>
-    <lastmod>2017-04-12T12:16:03.000Z</lastmod>
+    <lastmod>2017-04-15T03:31:49.000Z</lastmod>
     <data>
         <display>
         <title>使用Tableview可能产生的循环引用</title>
@@ -15,10 +35,11 @@
          
         <tag>OC</tag>
          
-        <tag>[object Object]</tag>
-         
          
            
+             
+              <breadCrumb title="OC" url="http://shiwenwen.top/categories/OC/"/>
+          
         </display>
     </data>
     </url>

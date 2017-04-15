@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://shiwenwen.top/"/>
-  <updated>2017-04-12T12:16:03.000Z</updated>
+  <updated>2017-04-15T03:35:08.000Z</updated>
   <id>http://shiwenwen.top/</id>
   
   <author>
@@ -16,11 +16,90 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Swift Package Manager 使用详解</title>
+    <link href="http://shiwenwen.top/2017/04/14/swiftPackageDemo/"/>
+    <id>http://shiwenwen.top/2017/04/14/swiftPackageDemo/</id>
+    <published>2017-04-13T16:42:08.000Z</published>
+    <updated>2017-04-15T03:35:08.000Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote>
+<p>Swift Package Manager(SPM)是苹果官方的Swift包管理工具,可以用来管理 Swift 代码的分配，它为 Swift 编译系统集成了自动进行下载、编译和连接依赖的过程。</p>
+<blockquote>
+<p>官方有一个对于SPM的示例教程，大家可以去看看:<a href="https://swift.org/package-manager/" target="_blank" rel="external">Package Manager</a></p>
+</blockquote>
+</blockquote>
+<a id="more"></a>
+<p><img src="/2017/04/14/swiftPackageDemo/SPM_cover.png" alt="SPM"></p>
+<h3 id="开始一个项目"><a href="#开始一个项目" class="headerlink" title="开始一个项目"></a>开始一个项目</h3><ul>
+<li><p>创建项目目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mkdir &quot;projectName&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>创建swift工程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cd &quot;projectName&quot;</div><div class="line">//swift package init  //可以通过参数--type 指定工程类型 empty|library|executable|system-module 默认为library 这里为了演示方便 我创建了一个可执行项目</div><div class="line">swift package init --type executable</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="/2017/04/14/swiftPackageDemo/init.png" alt="SPMInit"><br>我们来看一下每个文件，目录都是干什么的:</p>
+<ul>
+<li>Package.swift　 管理工程的包和依赖，稍后会详解。</li>
+<li>.gitignore 　熟悉git的童鞋该知道，这里可以添加需要被git忽略的文件，路径。</li>
+<li>Sources/  　项目的所有源文件都在这个目录底下。</li>
+<li>main.swift 　swift应用程序的入口文件。</li>
+<li>Tests/ 　测试代码的目录。</li>
+</ul>
+<p>我们给main.swift中添加一条打印语句:</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"Hello Swift Package Manager！"</span>)</div></pre></td></tr></table></figure>
+<p>终端执行:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">swift build</div></pre></td></tr></table></figure>
+<p>就会生成可执行文件<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure></p>
+<p>./.build/debug/Car<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">![SPMBulid](2017-04-14-swiftPackageDemo/bulid.png)</div><div class="line"></div><div class="line">成功运行。</div><div class="line"></div><div class="line"></div><div class="line">### Package.swift</div><div class="line"></div><div class="line">接下来看一下Package.swift中的内容</div><div class="line"></div><div class="line">```swift</div><div class="line">import PackageDescription　//包管理描述</div><div class="line"></div><div class="line">//这里固定写法</div><div class="line">let package = Package(</div><div class="line">    name: &quot;MyCar&quot;//你的项目名　若修改则build后的可执行文件名也会改变</div><div class="line">)</div></pre></td></tr></table></figure></p>
+<p>在<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure></p>
+<p>touch Sources/Car.swift<br>vim Sources/Car.swift<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">Car.swift:</div><div class="line"></div><div class="line">```swift</div><div class="line">struct Car&#123;</div><div class="line">    var name:String</div><div class="line">    var number:String</div><div class="line">    func showInfo()&#123;</div><div class="line">          print(&quot;name:\(name),number:\(number)&quot;)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>编辑<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">```swift</div><div class="line">let car = Car(name:&quot;BMW&quot;,number:&quot;京A66666&quot;)</div><div class="line">car.showInfo()</div></pre></td></tr></table></figure></p>
+<p>bulid后执行<br><img src="/2017/04/14/swiftPackageDemo/carbulid.png" alt="carbulid"></p>
+<ul>
+<li><p>Target<br>我们在<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"> </div></pre></td></tr></table></figure></p>
+<p>mkdir Sources/Car<br>mv Sources/Car.swift Sources/Car</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">然后重新编译一下，这个是就会报错了:</div><div class="line">![moduleError](2017-04-14-swiftPackageDemo/moduleError.png)</div><div class="line">意思是说文件布局有错，main不在一个模块中，解决办法是把main.swift移动到一个模块中。</div><div class="line"></div><div class="line">为什么呢？</div><div class="line"></div><div class="line">Swift通过 Modules 来管理代码，默认情况下，所有在 Sources 目录下的文件都在同一个module中，我们在Sources中新建了一个文件夹，就是新增了一个module－Car，也就没有了默认的module了，所以main.swift被孤立在外边。</div><div class="line"></div><div class="line">我们再创建一个文件```Application```,把```main.swift```放进去：</div><div class="line"></div><div class="line">我们现在的Sources文件目录结构应该是这样的:</div><div class="line">&gt; Sources</div><div class="line">&gt;&gt; Application</div><div class="line">&gt;&gt;&gt; main.swift</div><div class="line"></div><div class="line">&gt;&gt; Car</div><div class="line">&gt;&gt;&gt; Car.swift</div><div class="line"></div><div class="line">重新编译，还是会报错：</div><div class="line">![unresolvedCar](2017-04-14-swiftPackageDemo/unresolvedCar.png)</div><div class="line">因为module直接是相互独立的，所以我们需要在```main.swift```中```import Car</div></pre></td></tr></table></figure>
+<p>,当然这也是不够的，我们还需要编辑<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">```swift</div><div class="line">public struct Car&#123;</div><div class="line">  var name:String</div><div class="line">  var number:String</div><div class="line">	public init(name:String,number:String)&#123;</div><div class="line">		self.name = name</div><div class="line">		self.number = number</div><div class="line">	&#125;</div><div class="line">  public func showInfo()&#123;</div><div class="line">    print(&quot;name:\(name),number:\(number)&quot;)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当然，这还是不够的，因为SPM并不知道Application和Car这两个module直接的依赖关系，接下来就是重点了，我们在<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">```swift</div><div class="line">import PackageDescription</div><div class="line"></div><div class="line">let package = Package(</div><div class="line">    name: &quot;Car&quot;,</div><div class="line">    targets: [</div><div class="line">        Target(name: &quot;Application&quot;, dependencies: [&quot;Car&quot;]) //添加Application和Car之间的依赖</div><div class="line">    ] //我们可以添加多个Target</div><div class="line">)</div></pre></td></tr></table></figure></p>
+<p>现在就可以编译通过了。</p>
+</li>
+<li><p>dependencies<br>依赖可以是本地的可以是远程的库，可以是library也可以是executable<br>这里为了方便演示，我建立了一个气车引擎库Engine，提交到了<a href="https://github.com/SwwGit/Engine" target="_blank" rel="external">github</a></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">  <span class="keyword">public</span> <span class="class"><span class="keyword">struct</span> <span class="title">Engine</span> </span>&#123;</div><div class="line">	<span class="keyword">public</span> <span class="keyword">var</span> model:<span class="type">String</span></div><div class="line">  	<span class="keyword">public</span> <span class="keyword">init</span>(model:<span class="type">String</span>)&#123;</div><div class="line">		<span class="keyword">self</span>.model = model</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>  我们给工程添加一个来自远程依赖库Engine:</p>
+  <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// swift-tools-version:3.1</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> PackageDescription</div><div class="line"></div><div class="line"><span class="keyword">let</span> package = <span class="type">Package</span>(</div><div class="line">    name: <span class="string">"Car"</span>,</div><div class="line">    targets: [</div><div class="line">        <span class="type">Target</span>(name: <span class="string">"Application"</span>, dependencies: [<span class="string">"Car"</span>]) <span class="comment">//添加Application和Car之间的依赖</span></div><div class="line">    ], <span class="comment">//我们可以添加多个Target</span></div><div class="line">    dependencies: [　<span class="comment">//我们可以添加多个依赖包</span></div><div class="line">        .<span class="type">Package</span>(url: <span class="string">"https://github.com/SwwGit/Engine.git"</span>,</div><div class="line">                 majorVersion: <span class="number">1</span>) <span class="comment">// url 远程库地址　majorVersion 指定主要版本号</span></div><div class="line">    ]</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>  然后执行<figure class="highlight swift"><figcaption><span>build```</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">![<span class="type">EngineClone</span>](<span class="number">2017</span>-<span class="number">04</span>-<span class="number">14</span>-swiftPackageDemo/<span class="type">EngineClone</span>.png)</div><div class="line"><span class="type">SPM</span>会自动把依赖下载下来。**（ps ：　可以使用swift package clean 命令清除build命令生成的东西，但是不会清除下载的依赖包，要一起清除依赖包可以使用swift package reset命令）**</div><div class="line"></div><div class="line">我们修改一下```<span class="type">Car</span>.swift```中的内容:</div><div class="line"></div><div class="line">```swift</div><div class="line"><span class="keyword">import</span> Engine</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">struct</span> <span class="title">Car</span></span>&#123;</div><div class="line">  <span class="keyword">var</span> name:<span class="type">String</span></div><div class="line"> 	<span class="keyword">var</span> number:<span class="type">String</span></div><div class="line">	<span class="keyword">var</span> engine:<span class="type">Engine</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">init</span>(name:<span class="type">String</span>,number:<span class="type">String</span>,engine:<span class="type">Engine</span>)&#123;</div><div class="line">		<span class="keyword">self</span>.name = name</div><div class="line">		<span class="keyword">self</span>.number = number</div><div class="line">		<span class="keyword">self</span>.engine = engine</div><div class="line">	&#125;</div><div class="line"> <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">showInfo</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"name:\(name),number:\(number),engine:\(engine.model)"</span>)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>  将<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">```swift</div><div class="line"></div><div class="line">import Car</div><div class="line">import Engine</div><div class="line">let engine = Engine(model:&quot;Mach&quot;)</div><div class="line">let car = Car(name:&quot;BMW&quot;,number:&quot;京A66666&quot;,engine:engine)</div><div class="line">car.showInfo()</div></pre></td></tr></table></figure></p>
+<p>  编译后执行:<br>    <img src="/2017/04/14/swiftPackageDemo/engineExe.png" alt="engineExe"></p>
+<font size="5">相信到这里，大家应该很清楚SPM的懂法了！</font>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;Swift Package Manager(SPM)是苹果官方的Swift包管理工具,可以用来管理 Swift 代码的分配，它为 Swift 编译系统集成了自动进行下载、编译和连接依赖的过程。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;官方有一个对于SPM的示例教程，大家可以去看看:&lt;a href=&quot;https://swift.org/package-manager/&quot;&gt;Package Manager&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+      <category term="swift" scheme="http://shiwenwen.top/categories/swift/"/>
+    
+    
+      <category term="swift" scheme="http://shiwenwen.top/tags/swift/"/>
+    
+  </entry>
+  
+  <entry>
     <title>使用Tableview可能产生的循环引用</title>
     <link href="http://shiwenwen.top/2017/04/12/circular-reference/"/>
     <id>http://shiwenwen.top/2017/04/12/circular-reference/</id>
     <published>2017-04-12T09:26:40.000Z</published>
-    <updated>2017-04-12T12:16:03.000Z</updated>
+    <updated>2017-04-15T03:31:49.000Z</updated>
     
     <content type="html"><![CDATA[<blockquote>
 <p>循环引用在iOS开发中是个老生常谈的问题了,虽然ARC可以让你不用太去关心对象的释放问题，但是它并不能解决所有问题，例如循环引用。虽然这是这个大家都懂的问题，但是总会有很多人有疏忽。本文讲的就是一个实在的例子。</p>
@@ -58,12 +137,12 @@
     
     </summary>
     
+      <category term="OC" scheme="http://shiwenwen.top/categories/OC/"/>
+    
     
       <category term="iOS" scheme="http://shiwenwen.top/tags/iOS/"/>
     
       <category term="OC" scheme="http://shiwenwen.top/tags/OC/"/>
-    
-      <category term="[object Object]" scheme="http://shiwenwen.top/tags/object-Object/"/>
     
   </entry>
   

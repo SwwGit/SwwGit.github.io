@@ -75,7 +75,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="iOS,OC," />
+  <meta name="keywords" content="swift," />
 
 
 
@@ -94,27 +94,22 @@
 
 
 
-<meta name="description" content="关于深浅拷贝，已经是个老生常谈的问题了，自己曾经也有在面试中被问过，最近有个朋友问到过这个问题，借此机会，我们来细谈一下深浅拷贝的问题。">
-<meta name="keywords" content="iOS,OC">
+<meta name="description" content="Swift Package Manager(SPM)是苹果官方的Swift包管理工具,可以用来管理 Swift 代码的分配，它为 Swift 编译系统集成了自动进行下载、编译和连接依赖的过程。  官方有一个对于SPM的示例教程，大家可以去看看:Package Manager">
+<meta name="keywords" content="swift">
 <meta property="og:type" content="article">
-<meta property="og:title" content="细谈OC中的深浅拷贝">
-<meta property="og:url" content="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/index.html">
+<meta property="og:title" content="Swift Package Manager 使用详解">
+<meta property="og:url" content="http://shiwenwen.top/2017/04/14/swiftPackageDemo/index.html">
 <meta property="og:site_name" content="博文馆">
-<meta property="og:description" content="关于深浅拷贝，已经是个老生常谈的问题了，自己曾经也有在面试中被问过，最近有个朋友问到过这个问题，借此机会，我们来细谈一下深浅拷贝的问题。">
-<meta property="og:image" content="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/PersonInterface.png">
-<meta property="og:image" content="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/p1p2.png">
-<meta property="og:image" content="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/p1p2_address.png">
-<meta property="og:image" content="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/p3.png">
-<meta property="og:image" content="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/s4.png">
-<meta property="og:image" content="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/s5.png">
-<meta property="og:image" content="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/s7.png">
-<meta property="og:image" content="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/NSArrary.png">
-<meta property="og:image" content="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/mutableArray.png">
-<meta property="og:updated_time" content="2017-04-08T03:13:39.000Z">
+<meta property="og:description" content="Swift Package Manager(SPM)是苹果官方的Swift包管理工具,可以用来管理 Swift 代码的分配，它为 Swift 编译系统集成了自动进行下载、编译和连接依赖的过程。  官方有一个对于SPM的示例教程，大家可以去看看:Package Manager">
+<meta property="og:image" content="http://shiwenwen.top/2017/04/14/swiftPackageDemo/SPM_cover.png">
+<meta property="og:image" content="http://shiwenwen.top/2017/04/14/swiftPackageDemo/init.png">
+<meta property="og:image" content="http://shiwenwen.top/2017/04/14/swiftPackageDemo/carbulid.png">
+<meta property="og:image" content="http://shiwenwen.top/2017/04/14/swiftPackageDemo/engineExe.png">
+<meta property="og:updated_time" content="2017-04-15T03:35:08.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="细谈OC中的深浅拷贝">
-<meta name="twitter:description" content="关于深浅拷贝，已经是个老生常谈的问题了，自己曾经也有在面试中被问过，最近有个朋友问到过这个问题，借此机会，我们来细谈一下深浅拷贝的问题。">
-<meta name="twitter:image" content="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/PersonInterface.png">
+<meta name="twitter:title" content="Swift Package Manager 使用详解">
+<meta name="twitter:description" content="Swift Package Manager(SPM)是苹果官方的Swift包管理工具,可以用来管理 Swift 代码的分配，它为 Swift 编译系统集成了自动进行下载、编译和连接依赖的过程。  官方有一个对于SPM的示例教程，大家可以去看看:Package Manager">
+<meta name="twitter:image" content="http://shiwenwen.top/2017/04/14/swiftPackageDemo/SPM_cover.png">
 
 
 
@@ -142,13 +137,13 @@
 
 
 
-  <link rel="canonical" href="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/"/>
+  <link rel="canonical" href="http://shiwenwen.top/2017/04/14/swiftPackageDemo/"/>
 
 
 
 
 
-  <title> 细谈OC中的深浅拷贝 | 博文馆 </title>
+  <title> Swift Package Manager 使用详解 | 博文馆 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -341,7 +336,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://shiwenwen.top/2017/04/07/talking-about-oc-copy/">
+    <link itemprop="mainEntityOfPage" href="http://shiwenwen.top/2017/04/14/swiftPackageDemo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="sww">
@@ -362,7 +357,7 @@
             
             
               
-                细谈OC中的深浅拷贝
+                Swift Package Manager 使用详解
               
             
           </h2>
@@ -377,8 +372,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-07T14:31:14+08:00">
-                2017-04-07
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-14T00:42:08+08:00">
+                2017-04-14
               </time>
             
 
@@ -400,8 +395,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/OC/" itemprop="url" rel="index">
-                    <span itemprop="name">OC</span>
+                  <a href="/categories/swift/" itemprop="url" rel="index">
+                    <span itemprop="name">swift</span>
                   </a>
                 </span>
 
@@ -418,7 +413,7 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a class="cloud-tie-join-count" href="/2017/04/07/talking-about-oc-copy/#comments" itemprop="discussionUrl">
+                <a class="cloud-tie-join-count" href="/2017/04/14/swiftPackageDemo/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count join-count" itemprop="commentCount"></span>
                 </a>
               </span>
@@ -427,7 +422,7 @@
 
           
           
-             <span id="/2017/04/07/talking-about-oc-copy/" class="leancloud_visitors" data-flag-title="细谈OC中的深浅拷贝">
+             <span id="/2017/04/14/swiftPackageDemo/" class="leancloud_visitors" data-flag-title="Swift Package Manager 使用详解">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -457,50 +452,57 @@
 
       
         <blockquote>
-<p>关于深浅拷贝，已经是个老生常谈的问题了，自己曾经也有在面试中被问过，最近有个朋友问到过这个问题，借此机会，我们来细谈一下深浅拷贝的问题。</p>
+<p>Swift Package Manager(SPM)是苹果官方的Swift包管理工具,可以用来管理 Swift 代码的分配，它为 Swift 编译系统集成了自动进行下载、编译和连接依赖的过程。</p>
+<blockquote>
+<p>官方有一个对于SPM的示例教程，大家可以去看看:<a href="https://swift.org/package-manager/" target="_blank" rel="external">Package Manager</a></p>
+</blockquote>
 </blockquote>
 <a id="more"></a>
-<h2 id="深浅拷贝的概念"><a href="#深浅拷贝的概念" class="headerlink" title="深浅拷贝的概念"></a>深浅拷贝的概念</h2><p>什么是深拷贝什么是浅拷贝呢，简单来说就是：</p>
+<p><img src="/2017/04/14/swiftPackageDemo/SPM_cover.png" alt="SPM"></p>
+<h3 id="开始一个项目"><a href="#开始一个项目" class="headerlink" title="开始一个项目"></a>开始一个项目</h3><ul>
+<li><p>创建项目目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mkdir &quot;projectName&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>创建swift工程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cd &quot;projectName&quot;</div><div class="line">//swift package init  //可以通过参数--type 指定工程类型 empty|library|executable|system-module 默认为library 这里为了演示方便 我创建了一个可执行项目</div><div class="line">swift package init --type executable</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="/2017/04/14/swiftPackageDemo/init.png" alt="SPMInit"><br>我们来看一下每个文件，目录都是干什么的:</p>
 <ul>
-<li>深拷贝是对一个对象的内容的拷贝，分配新的内存去存储。拷贝后的对象和原来的对象并不是同一个对象，只是内容一样而已。</li>
-<li>浅拷贝则是对对象地址的拷贝，和原来的对象的内容是同一份，并没有分配新的内存。</li>
+<li>Package.swift　 管理工程的包和依赖，稍后会详解。</li>
+<li>.gitignore 　熟悉git的童鞋该知道，这里可以添加需要被git忽略的文件，路径。</li>
+<li>Sources/  　项目的所有源文件都在这个目录底下。</li>
+<li>main.swift 　swift应用程序的入口文件。</li>
+<li>Tests/ 　测试代码的目录。</li>
 </ul>
-<h2 id="深浅拷贝演示"><a href="#深浅拷贝演示" class="headerlink" title="深浅拷贝演示"></a>深浅拷贝演示</h2><ul>
-<li>我们定义一个Person类如下:<br><img src="/2017/04/07/talking-about-oc-copy/PersonInterface.png" alt="PersonClass"></li>
-<li>然后我们生成一个Person对象p1,再定义一个p2，将p1赋值给p2:<br><img src="/2017/04/07/talking-about-oc-copy/p1p2.png" alt="PersonClass"><br>这里实际上就是进行了一次浅拷贝，把p1的地址赋给了p2。p1和p2都是指向同一个对象,但是对象的引用计数增加了1。<br><img src="/2017/04/07/talking-about-oc-copy/p1p2_address.png" alt="PersonClass"><br>如果我们对p2的属性进行修改,则p1也会改变，因为操作的就是同一个对象。</li>
-<li>如何进行深拷贝呢,我们可以遵守NSCopying,NSMutableCopying协议,实现:</li>
+<p>我们给main.swift中添加一条打印语句:</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"Hello Swift Package Manager！"</span>)</div></pre></td></tr></table></figure>
+<p>终端执行:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">swift build</div></pre></td></tr></table></figure>
+<p>就会生成可执行文件<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure></p>
+<p>./.build/debug/Car<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">![SPMBulid](2017-04-14-swiftPackageDemo/bulid.png)</div><div class="line"></div><div class="line">成功运行。</div><div class="line"></div><div class="line"></div><div class="line">### Package.swift</div><div class="line"></div><div class="line">接下来看一下Package.swift中的内容</div><div class="line"></div><div class="line">```swift</div><div class="line">import PackageDescription　//包管理描述</div><div class="line"></div><div class="line">//这里固定写法</div><div class="line">let package = Package(</div><div class="line">    name: &quot;MyCar&quot;//你的项目名　若修改则build后的可执行文件名也会改变</div><div class="line">)</div></pre></td></tr></table></figure></p>
+<p>在<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure></p>
+<p>touch Sources/Car.swift<br>vim Sources/Car.swift<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">Car.swift:</div><div class="line"></div><div class="line">```swift</div><div class="line">struct Car&#123;</div><div class="line">    var name:String</div><div class="line">    var number:String</div><div class="line">    func showInfo()&#123;</div><div class="line">          print(&quot;name:\(name),number:\(number)&quot;)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>编辑<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">```swift</div><div class="line">let car = Car(name:&quot;BMW&quot;,number:&quot;京A66666&quot;)</div><div class="line">car.showInfo()</div></pre></td></tr></table></figure></p>
+<p>bulid后执行<br><img src="/2017/04/14/swiftPackageDemo/carbulid.png" alt="carbulid"></p>
+<ul>
+<li><p>Target<br>我们在<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"> </div></pre></td></tr></table></figure></p>
+<p>mkdir Sources/Car<br>mv Sources/Car.swift Sources/Car</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">然后重新编译一下，这个是就会报错了:</div><div class="line">![moduleError](2017-04-14-swiftPackageDemo/moduleError.png)</div><div class="line">意思是说文件布局有错，main不在一个模块中，解决办法是把main.swift移动到一个模块中。</div><div class="line"></div><div class="line">为什么呢？</div><div class="line"></div><div class="line">Swift通过 Modules 来管理代码，默认情况下，所有在 Sources 目录下的文件都在同一个module中，我们在Sources中新建了一个文件夹，就是新增了一个module－Car，也就没有了默认的module了，所以main.swift被孤立在外边。</div><div class="line"></div><div class="line">我们再创建一个文件```Application```,把```main.swift```放进去：</div><div class="line"></div><div class="line">我们现在的Sources文件目录结构应该是这样的:</div><div class="line">&gt; Sources</div><div class="line">&gt;&gt; Application</div><div class="line">&gt;&gt;&gt; main.swift</div><div class="line"></div><div class="line">&gt;&gt; Car</div><div class="line">&gt;&gt;&gt; Car.swift</div><div class="line"></div><div class="line">重新编译，还是会报错：</div><div class="line">![unresolvedCar](2017-04-14-swiftPackageDemo/unresolvedCar.png)</div><div class="line">因为module直接是相互独立的，所以我们需要在```main.swift```中```import Car</div></pre></td></tr></table></figure>
+<p>,当然这也是不够的，我们还需要编辑<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">```swift</div><div class="line">public struct Car&#123;</div><div class="line">  var name:String</div><div class="line">  var number:String</div><div class="line">	public init(name:String,number:String)&#123;</div><div class="line">		self.name = name</div><div class="line">		self.number = number</div><div class="line">	&#125;</div><div class="line">  public func showInfo()&#123;</div><div class="line">    print(&quot;name:\(name),number:\(number)&quot;)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当然，这还是不够的，因为SPM并不知道Application和Car这两个module直接的依赖关系，接下来就是重点了，我们在<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">```swift</div><div class="line">import PackageDescription</div><div class="line"></div><div class="line">let package = Package(</div><div class="line">    name: &quot;Car&quot;,</div><div class="line">    targets: [</div><div class="line">        Target(name: &quot;Application&quot;, dependencies: [&quot;Car&quot;]) //添加Application和Car之间的依赖</div><div class="line">    ] //我们可以添加多个Target</div><div class="line">)</div></pre></td></tr></table></figure></p>
+<p>现在就可以编译通过了。</p>
+</li>
+<li><p>dependencies<br>依赖可以是本地的可以是远程的库，可以是library也可以是executable<br>这里为了方便演示，我建立了一个气车引擎库Engine，提交到了<a href="https://github.com/SwwGit/Engine" target="_blank" rel="external">github</a></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">  <span class="keyword">public</span> <span class="class"><span class="keyword">struct</span> <span class="title">Engine</span> </span>&#123;</div><div class="line">	<span class="keyword">public</span> <span class="keyword">var</span> model:<span class="type">String</span></div><div class="line">  	<span class="keyword">public</span> <span class="keyword">init</span>(model:<span class="type">String</span>)&#123;</div><div class="line">		<span class="keyword">self</span>.model = model</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
 </ul>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">id</span>)copyWithZone:(<span class="keyword">nullable</span> <span class="built_in">NSZone</span> *)zone;</div><div class="line">- (<span class="keyword">id</span>)mutableCopyWithZone:(<span class="keyword">nullable</span> <span class="built_in">NSZone</span> *)zone;</div></pre></td></tr></table></figure>
-<p>我们来准守NSCopying,</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Person</span> : <span class="title">NSObject</span> &lt;<span class="title">NSCopying</span>,<span class="title">NSMutableCopying</span>&gt;</span></div></pre></td></tr></table></figure>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Person</span></span></div><div class="line">-(<span class="keyword">id</span>)copyWithZone:(<span class="built_in">NSZone</span> *)zone&#123;</div><div class="line">    Person *p = [Person allocWithZone:zone];</div><div class="line">    p.name = _name; <span class="comment">//因为属性name是在前面是通过copy声明，在赋值的时候会自动调用到copy,所以这里不需要 [_name copy]</span></div><div class="line">    p.age = _age;</div><div class="line">    p.height = _height;</div><div class="line">    <span class="keyword">return</span> p;</div><div class="line">&#125;</div><div class="line"></div><div class="line">```	</div><div class="line">声明对象p3为p1的拷贝:</div><div class="line"></div><div class="line">```objc</div><div class="line">Person *p3 = [p1 <span class="keyword">copy</span>];</div></pre></td></tr></table></figure>
-<p>运行，查看:<br><img src="/2017/04/07/talking-about-oc-copy/p3.png" alt="p3"></p>
-<h2 id="Foundation中的深浅拷贝"><a href="#Foundation中的深浅拷贝" class="headerlink" title="Foundation中的深浅拷贝"></a>Foundation中的深浅拷贝</h2><h3 id="NSString"><a href="#NSString" class="headerlink" title="NSString"></a>NSString</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span> *s1 = <span class="string">@"hello word"</span>;</div><div class="line"><span class="built_in">NSString</span> *s2 = s1;</div><div class="line"><span class="built_in">NSString</span> *s3 = [s1 <span class="keyword">copy</span>];</div><div class="line"><span class="built_in">NSMutableString</span> *s4 = [s1 mutableCopy];</div></pre></td></tr></table></figure>
-<p>这里我们用字面量直接创建了一个不可变字符串s1,然后通过直接赋值和copy方式分别赋值给了s2,s3。实际上对于不可变字符串，这两个赋值方式效果是等价的，都是浅拷贝,都造成了引用计数增加1。<br>为什么s4我用可变字符串来声明呢，因为对于不可变字符串进行mutableCopy，就会在内存中生成一个可变字符串对象，并把原来字符串的内容拿过来。</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//我们来对s4进行一些操作来确定s4确实是可变字符串</span></div><div class="line"></div><div class="line">[s4 appendString:<span class="string">@"!!!!"</span>];</div></pre></td></tr></table></figure>
-<p>结果:<img src="/2017/04/07/talking-about-oc-copy/s4.png" alt="s4"><br>如果我们用可变字符串来声明s3,并调用可变字符串的方法，则会报错。</p>
-<p><strong>结论：对于NSString,直接赋值和copy都是浅拷贝, mutableCopy为深拷贝</strong></p>
-<h3 id="NSMutableString"><a href="#NSMutableString" class="headerlink" title="NSMutableString"></a>NSMutableString</h3><p>我们直接用上面生成的可变字符串s4:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSMutableString</span> *s5 = s4;</div><div class="line">[s5 appendString:<span class="string">@"##^_^"</span>];</div></pre></td></tr></table></figure>
-<p>查看运行后结果:<br><img src="/2017/04/07/talking-about-oc-copy/s5.png" alt="s5"></p>
-<p>和我们预期的一样，s4的值随s5一起改变了，因为是浅拷贝，所指向的字符串对象是同一个。</p>
-<p>我们接着操作:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSMutableString</span> *s6 = [s4 <span class="keyword">copy</span>];</div><div class="line">[s5 appendString:<span class="string">@"##~_~"</span>];</div></pre></td></tr></table></figure>
-<p>运行后，程序在<strong>appendString</strong>处崩溃，因为可变字符串执行copy实际上会在内存中生成一个内容相同的不可变字符串，是深拷贝。(ps：所以我们给一个类声明字符串类型的property时，通常使用copy,防止外部对字符串进行了改变影响到对象)。<br>我们改为这样写:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span> *s6 = [s4 <span class="keyword">copy</span>];</div></pre></td></tr></table></figure>
-<p>接着我们来测试mutableCopy:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSMutableString</span> *s7 = [s4 mutableCopy];</div><div class="line">[s7 appendString:<span class="string">@"##~_~"</span>];</div></pre></td></tr></table></figure>
-<p>运行没有任何问题，结果如下:<br><img src="/2017/04/07/talking-about-oc-copy/s7.png" alt="s7"><br>可以看出,s7是一个可变对象，但是对s7的操作并没有影响到s4,s5。所以可变字符串执行mutableCopy，也是深拷贝，会在内存中生成一个新的内容一样的可变字符串。</p>
-<p><strong>结论：对于NSMutableString,直接赋值是浅拷贝, copy和mutableCopy都为深拷贝,copy会产生一个不可变字符串对象，而mutableCopy会产生一个可变字符串对象</strong></p>
-<h3 id="容器类-此处以Arrary为例，NSSet-Dictionary一样。"><a href="#容器类-此处以Arrary为例，NSSet-Dictionary一样。" class="headerlink" title="容器类 此处以Arrary为例，NSSet,Dictionary一样。"></a>容器类 此处以Arrary为例，NSSet,Dictionary一样。</h3><p>首先我们来看一下不可变数组，如下:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">Person *p1 = [[Person alloc]initWithName:<span class="string">@"p1"</span> height:<span class="number">175</span> age:<span class="number">21</span>];</div><div class="line">Person *p2 = [[Person alloc]initWithName:<span class="string">@"p2"</span> height:<span class="number">176</span> age:<span class="number">22</span>];</div><div class="line">Person *p3 = [[Person alloc]initWithName:<span class="string">@"p3"</span> height:<span class="number">177</span> age:<span class="number">23</span>];</div><div class="line">   </div><div class="line"><span class="built_in">NSArray</span> *a1 = @[p1,p2,p3];</div><div class="line"><span class="built_in">NSArray</span> *a2 = a1;</div><div class="line"><span class="built_in">NSArray</span> *a3 = [a1 <span class="keyword">copy</span>];</div><div class="line"><span class="built_in">NSArray</span> *a4 = [a1 mutableCopy];</div></pre></td></tr></table></figure>
-<p>运行后我们查看各个数组如下:<br><img src="/2017/04/07/talking-about-oc-copy/NSArrary.png" alt="NSArrary"><br>我们可以看出直接赋值的a2和copy出的a3都是对a1浅拷贝，都是同一个数组对象。a4则是新的可变数组对象(虽然我用NSArray声明的a4,但是从打印结果可以看出a4是一个可变数组)，可其中的元素内容却还是一样的。可见对NSArrary的mutableCopy是对数组本身的深拷贝，但是对数组中的元素还是浅拷贝。</p>
-<p><strong>结论：对于不可变容器类, copy和直接赋值是浅拷贝，类容器对象本身和容器中的元素都是浅拷贝。mutableCopy为对容器对象本身的深拷贝,产生一个新的可变的容器对象，但是对于容器中的元素，为浅拷贝</strong></p>
-<p>我们接着用上面生成的a4来看一下可变数组的拷贝:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSMutableArray</span> *a4 = [a1 mutableCopy];<span class="comment">//我们改用NSMutableArray声明</span></div><div class="line"><span class="built_in">NSMutableArray</span> *a5 = a4;</div><div class="line"><span class="built_in">NSMutableArray</span> *a6 = [a4 <span class="keyword">copy</span>];</div><div class="line"><span class="built_in">NSMutableArray</span> *a7 = [a4 mutableCopy];</div></pre></td></tr></table></figure>
-<p>运行后我们查看各个数组如下:<br><img src="/2017/04/07/talking-about-oc-copy/mutableArray.png" alt="mutableArray"><br>我们可以看出，直接赋值的a5是浅拷贝，copy出的a6，数组对象发生了变化，生成了一个新的不可变数组(虽然这里是NSMutableArray声明的，但是从打印结果可以看出是一个不可变数组)，但是元素内容依旧没有改变。所以是对容器对象深拷贝，其中元素的浅拷贝。使用mutableCopy，也是深拷贝，产生了一个新的可变数组，元素内容也没有改变。还是是对容器对象深拷贝，其中元素的浅拷贝。</p>
-<p><strong>结论：对于可变容器类, 直接赋值是浅拷贝，类容器对象本身和容器中的元素都是浅拷贝。copy和mutableCopy为对容器对象本身的深拷贝, copy产生一个新的不可变的容器、mutableCopy产生一个新的可变的容器对象，但是对于容器中的元素，为浅拷贝</strong></p>
-<p><strong><em>ps:实际上，上面的所有直接赋值，都是retain的过程，是浅拷贝，但是引用计数会增加</em></strong></p>
+<p>  我们给工程添加一个来自远程依赖库Engine:</p>
+  <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// swift-tools-version:3.1</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> PackageDescription</div><div class="line"></div><div class="line"><span class="keyword">let</span> package = <span class="type">Package</span>(</div><div class="line">    name: <span class="string">"Car"</span>,</div><div class="line">    targets: [</div><div class="line">        <span class="type">Target</span>(name: <span class="string">"Application"</span>, dependencies: [<span class="string">"Car"</span>]) <span class="comment">//添加Application和Car之间的依赖</span></div><div class="line">    ], <span class="comment">//我们可以添加多个Target</span></div><div class="line">    dependencies: [　<span class="comment">//我们可以添加多个依赖包</span></div><div class="line">        .<span class="type">Package</span>(url: <span class="string">"https://github.com/SwwGit/Engine.git"</span>,</div><div class="line">                 majorVersion: <span class="number">1</span>) <span class="comment">// url 远程库地址　majorVersion 指定主要版本号</span></div><div class="line">    ]</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>  然后执行<figure class="highlight swift"><figcaption><span>build```</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">![<span class="type">EngineClone</span>](<span class="number">2017</span>-<span class="number">04</span>-<span class="number">14</span>-swiftPackageDemo/<span class="type">EngineClone</span>.png)</div><div class="line"><span class="type">SPM</span>会自动把依赖下载下来。**（ps ：　可以使用swift package clean 命令清除build命令生成的东西，但是不会清除下载的依赖包，要一起清除依赖包可以使用swift package reset命令）**</div><div class="line"></div><div class="line">我们修改一下```<span class="type">Car</span>.swift```中的内容:</div><div class="line"></div><div class="line">```swift</div><div class="line"><span class="keyword">import</span> Engine</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">struct</span> <span class="title">Car</span></span>&#123;</div><div class="line">  <span class="keyword">var</span> name:<span class="type">String</span></div><div class="line"> 	<span class="keyword">var</span> number:<span class="type">String</span></div><div class="line">	<span class="keyword">var</span> engine:<span class="type">Engine</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">init</span>(name:<span class="type">String</span>,number:<span class="type">String</span>,engine:<span class="type">Engine</span>)&#123;</div><div class="line">		<span class="keyword">self</span>.name = name</div><div class="line">		<span class="keyword">self</span>.number = number</div><div class="line">		<span class="keyword">self</span>.engine = engine</div><div class="line">	&#125;</div><div class="line"> <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">showInfo</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"name:\(name),number:\(number),engine:\(engine.model)"</span>)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>  将<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">```swift</div><div class="line"></div><div class="line">import Car</div><div class="line">import Engine</div><div class="line">let engine = Engine(model:&quot;Mach&quot;)</div><div class="line">let car = Car(name:&quot;BMW&quot;,number:&quot;京A66666&quot;,engine:engine)</div><div class="line">car.showInfo()</div></pre></td></tr></table></figure></p>
+<p>  编译后执行:<br>    <img src="/2017/04/14/swiftPackageDemo/engineExe.png" alt="engineExe"></p>
+<font size="5">相信到这里，大家应该很清楚SPM的懂法了！</font>
 
       
     </div>
@@ -551,9 +553,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/iOS/" rel="tag"># iOS</a>
-          
-            <a href="/tags/OC/" rel="tag"># OC</a>
+            <a href="/tags/swift/" rel="tag"># swift</a>
           
         </div>
       
@@ -566,18 +566,14 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/04/09/swift-on-Linux-with-CLion/" rel="next" title="Ubuntu中使用CLion编写swift(3.1)代码">
-                <i class="fa fa-chevron-left"></i> Ubuntu中使用CLion编写swift(3.1)代码
-              </a>
-            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/04/07/multi-platform-edit-add-domain-name-binding/" rel="prev" title="授之以渔:Hexo+GitHub全平台快速搭建博客绝对详解（三）">
-                授之以渔:Hexo+GitHub全平台快速搭建博客绝对详解（三） <i class="fa fa-chevron-right"></i>
+              <a href="/2017/04/12/circular-reference/" rel="prev" title="使用Tableview可能产生的循环引用">
+                使用Tableview可能产生的循环引用 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -742,7 +738,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#深浅拷贝的概念"><span class="nav-number">1.</span> <span class="nav-text">深浅拷贝的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#深浅拷贝演示"><span class="nav-number">2.</span> <span class="nav-text">深浅拷贝演示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Foundation中的深浅拷贝"><span class="nav-number">3.</span> <span class="nav-text">Foundation中的深浅拷贝</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NSString"><span class="nav-number">3.1.</span> <span class="nav-text">NSString</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSMutableString"><span class="nav-number">3.2.</span> <span class="nav-text">NSMutableString</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#容器类-此处以Arrary为例，NSSet-Dictionary一样。"><span class="nav-number">3.3.</span> <span class="nav-text">容器类 此处以Arrary为例，NSSet,Dictionary一样。</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#开始一个项目"><span class="nav-number">1.</span> <span class="nav-text">开始一个项目</span></a></li></ol></div>
             
 
           </div>
