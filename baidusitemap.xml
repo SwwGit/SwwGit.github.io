@@ -5,7 +5,7 @@
     
   <url>
     <loc>http://shiwenwen.top/2017/04/14/swiftPackageDemo/</loc>
-    <lastmod>2017-04-15T05:25:09.000Z</lastmod>
+    <lastmod>2017-04-15T05:33:05.000Z</lastmod>
     <data>
         <display>
         <title>Swift Package Manager 使用详解</title>
@@ -17,6 +17,28 @@
            
              
               <breadCrumb title="swift" url="http://shiwenwen.top/categories/swift/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://shiwenwen.top/2017/04/07/talking-about-oc-copy/</loc>
+    <lastmod>2017-04-15T05:30:16.000Z</lastmod>
+    <data>
+        <display>
+        <title>细谈OC中的深浅拷贝</title>
+        <pubTime>2017-04-07T06:31:14.000Z</pubTime>
+        
+        <tag>iOS</tag>
+         
+        <tag>OC</tag>
+         
+         
+           
+             
+              <breadCrumb title="OC" url="http://shiwenwen.top/categories/OC/"/>
           
         </display>
     </data>
@@ -61,28 +83,6 @@
            
              
               <breadCrumb title="swift" url="http://shiwenwen.top/categories/swift/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://shiwenwen.top/2017/04/07/talking-about-oc-copy/</loc>
-    <lastmod>2017-04-08T03:13:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>细谈OC中的深浅拷贝</title>
-        <pubTime>2017-04-07T06:31:14.000Z</pubTime>
-        
-        <tag>iOS</tag>
-         
-        <tag>OC</tag>
-         
-         
-           
-             
-              <breadCrumb title="OC" url="http://shiwenwen.top/categories/OC/"/>
           
         </display>
     </data>
