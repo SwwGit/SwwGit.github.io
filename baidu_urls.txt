@@ -1,5 +1,5 @@
+http://shiwenwen.top/2017/04/20/use-perfect-assistant-dyploy-aws/
 http://shiwenwen.top/2017/04/14/swiftPackageDemo/
 http://shiwenwen.top/2017/04/12/circular-reference/
 http://shiwenwen.top/2017/04/09/swift-on-Linux-with-CLion/
 http://shiwenwen.top/2017/04/07/talking-about-oc-copy/
-http://shiwenwen.top/2017/04/07/multi-platform-edit-add-domain-name-binding/
