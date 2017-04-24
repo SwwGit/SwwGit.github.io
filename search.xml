@@ -14,12 +14,12 @@
 <p>本文具体介绍下PA从项目的创建到部署到AWS服务的全过程。</p>
 </blockquote>
 <a id="more"></a>
-<h2 id="PM-的基本安装使用"><a href="#PM-的基本安装使用" class="headerlink" title="PM 的基本安装使用"></a>PM 的基本安装使用</h2><ul>
-<li>PM安装配置可以去看这篇<a href="https://mp.weixin.qq.com/s?__biz=MzI3ODQ5NzYyOA==&amp;mid=100000122&amp;idx=1&amp;sn=5a0296d7ab43200f8203d79592ee8d6a&amp;chksm=6b5751495c20d85f25213e6a18327fd0499971e1da16613ba00cb8463feafc72fa5cfb530c0c&amp;mpshare=1&amp;scene=1&amp;srcid=0420ONO2z1QFWAZ6bUuuRPLt&amp;key=6543a5e229daa9fcbbc461973db337b0cd975a93bea31432aaf98cc0ab7ebf22302bae318a80586ee0b433a14fba0832a09a3f9a8e999d5597a252b032994eef3c58c6ca17d4c8877b01a58496589c70&amp;ascene=0&amp;uin=MjYxMTAzNDE1&amp;devicetype=iMac+MacBookPro11%2C5+OSX+OSX+10.12.4+build(16E195" target="_blank" rel="external">PerfectlySoft宣布Perfect 助手全面公测（附安装指南）</a>&amp;version=12020002&amp;nettype=WIFI&amp;fontScale=100&amp;pass_ticket=E8zO4VvfEMXgMMc490noGRwlX8DnwHNz1JioCOCrsIw%3D)</li>
+<h2 id="PA-的基本安装使用"><a href="#PA-的基本安装使用" class="headerlink" title="PA 的基本安装使用"></a>PA 的基本安装使用</h2><ul>
+<li>PA安装配置可以去看这篇<a href="https://mp.weixin.qq.com/s?__biz=MzI3ODQ5NzYyOA==&amp;mid=100000122&amp;idx=1&amp;sn=5a0296d7ab43200f8203d79592ee8d6a&amp;chksm=6b5751495c20d85f25213e6a18327fd0499971e1da16613ba00cb8463feafc72fa5cfb530c0c&amp;mpshare=1&amp;scene=1&amp;srcid=0420ONO2z1QFWAZ6bUuuRPLt&amp;key=6543a5e229daa9fcbbc461973db337b0cd975a93bea31432aaf98cc0ab7ebf22302bae318a80586ee0b433a14fba0832a09a3f9a8e999d5597a252b032994eef3c58c6ca17d4c8877b01a58496589c70&amp;ascene=0&amp;uin=MjYxMTAzNDE1&amp;devicetype=iMac+MacBookPro11%2C5+OSX+OSX+10.12.4+build(16E195" target="_blank" rel="external">PerfectlySoft宣布Perfect 助手全面公测（附安装指南）</a>&amp;version=12020002&amp;nettype=WIFI&amp;fontScale=100&amp;pass_ticket=E8zO4VvfEMXgMMc490noGRwlX8DnwHNz1JioCOCrsIw%3D)</li>
 <li>安装配置好后，可以参考这篇<a href="https://segmentfault.com/a/1190000008038863" target="_blank" rel="external">使用Perfect 助手时更新Docker加速方法</a>来加速Docker。</li>
 <li><p>开始第一个Perfect的服务项目:</p>
 <ul>
-<li><p>打开PM，在Welcome页，创建一个Http Server 项目:</p>
+<li><p>打开PA，在Welcome页，创建一个Http Server 项目:</p>
 <p>  <img src="/2017/04/20/use-perfect-assistant-dyploy-aws/CreateHttpServerProject.jpg" alt="CreateHttpServerProject"></p>
 <p>  <img src="/2017/04/20/use-perfect-assistant-dyploy-aws/NewProject.png" alt="NewProject"><br>  我这里创建了一个名为PerfectTemplate的项目。<br>  <img src="/2017/04/20/use-perfect-assistant-dyploy-aws/ProjectsDetaill.jpg" alt="ProjectsDetaill"></p>
 </li>
@@ -58,7 +58,7 @@
 </li>
 </ul>
 <h2 id="部署及配置"><a href="#部署及配置" class="headerlink" title="部署及配置"></a>部署及配置</h2><ul>
-<li><p>我们回到PM中在build中选择Deploy:<br>  <img src="/2017/04/20/use-perfect-assistant-dyploy-aws/CreateNewDeploy.png" alt="CreateNewDeploy"><br>  然后选择 <strong>Amazon web service</strong> 点击<strong>Next</strong>。<br>  <img src="/2017/04/20/use-perfect-assistant-dyploy-aws/DeployCfg.png" alt="DeployCfg"><br>  添加实例<br>  <img src="/2017/04/20/use-perfect-assistant-dyploy-aws/AddInstance.png" alt="AddInstance"><br>  这个时候我们进入<strong>AWS-服务-ECS控制面板-实例查看</strong>，等待实例状态由<strong>pending</strong>变为<strong>running</strong>。<br>  <img src="/2017/04/20/use-perfect-assistant-dyploy-aws/InstenceInit.png" alt="InstenceInit"></p>
+<li><p>我们回到PA中在build中选择Deploy:<br>  <img src="/2017/04/20/use-perfect-assistant-dyploy-aws/CreateNewDeploy.png" alt="CreateNewDeploy"><br>  然后选择 <strong>Amazon web service</strong> 点击<strong>Next</strong>。<br>  <img src="/2017/04/20/use-perfect-assistant-dyploy-aws/DeployCfg.png" alt="DeployCfg"><br>  添加实例<br>  <img src="/2017/04/20/use-perfect-assistant-dyploy-aws/AddInstance.png" alt="AddInstance"><br>  这个时候我们进入<strong>AWS-服务-ECS控制面板-实例查看</strong>，等待实例状态由<strong>pending</strong>变为<strong>running</strong>。<br>  <img src="/2017/04/20/use-perfect-assistant-dyploy-aws/InstenceInit.png" alt="InstenceInit"></p>
 <p>  我们回到PA中,点击<strong>Reload</strong><br>  选择实例，点击保存。</p>
 <p>  <img src="/2017/04/20/use-perfect-assistant-dyploy-aws/Reload.png" alt="Reload"></p>
 </li>
